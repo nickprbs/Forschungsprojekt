@@ -23,6 +23,10 @@ cd Forschungsprojekt
 A virtual environment helps you manage dependencies without interfering with other projects on your machine. The following steps will guide you through creating and activating the virtual environment.
 
 #### On Mac/Linux:
+Make Sure that the file can be executed: 
+```bash
+chmod +x setup.sh
+```
 Run the setup script in your terminal:
 ```bash
 ./setup.sh
