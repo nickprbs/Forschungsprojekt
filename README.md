@@ -34,7 +34,15 @@ Run the setup script in your console:
 setup.bat
 ```
 
+**Note: if you can't execute the setup script you may need to give it permission to execute**
+You can do this by running the commands with admin rights
+for example on mac run
+```bash
+sudo ./setup.sh
+```
+This will ask you for your password. 
 
+On Windows you could run the terminal as an administrator.
 ---
 
 If you don't want to use the setup scripts, run the following commands:
