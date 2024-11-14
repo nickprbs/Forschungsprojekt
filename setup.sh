@@ -3,7 +3,7 @@
 # Check if virtual environment already exists
 if [ ! -d "venv" ]; then
   # Create virtual environment
-  python3 -m venv venv
+  sudo python3 -m venv venv
   echo "Created virtual environment"
 else
   echo "Virtual environment already exists"
@@ -13,6 +13,6 @@ fi
 source venv/bin/activate
 
 # install requirements
-pip install -r requirements.txt
+sudo pip install -r requirements.txt
 
 echo "Installed requirements."
