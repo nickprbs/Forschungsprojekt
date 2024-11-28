@@ -220,25 +220,39 @@
 
         // get all connected gamepads
         const gamePads = navigator.getGamepads();
+        console.log(gamePads.length);
         const MouseAndKeyboard = gamePads[0];
         const xboxController = gamePads[1];
 
         vegaEmbed('#vis', spec).then(view=>{
-            if(xboxController){
-
-            }
-
             vegaView = view.view;
-            vegaView.signal('hover', "hello");
-            vegaView.runsync();
+            if(xboxController){
+                console.log("Controller found");
+                controlProfileXboxController
+            }
         });
 
 
-        function controlProfileXboxController(){
+        function controlProfileXboxController(vegaView){
             const xAxisLeft = xboxController.axes[0];
             const yAxisLeft = xboxController.axes[1];
-            const xAxisRight = xboxController.axes[2];
-            const yAxisRight = xboxController.axes[3];
+            
+            // Skalierung der Achsenbewegung auf Geschwindigkeit
+            let deltaX = xAxis * 5;
+            let deltaY = yAxis * 5;
+
+
+            // Aktualisiere Cursor-Position
+            const currentX = vegaView.signal('cursor_x');
+            const currentY = vegaView.signal('cursor_y');
+
+            let newX = Math.min(Math.max(currentX + deltaX, 0), WIDTH);
+            let newY = Math.min(Math.max(currentY + deltaY, 0), HEIGHT);
+
+            vegaView.signal('cursor_x', newX);
+            vegaView.signal('cursor_y', newY);
+            vegaView.runAsync();
+            requestAnimationFrame(controlProfileXboxController(vegaView))
         }
 
     </script>
