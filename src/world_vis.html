@@ -81,6 +81,8 @@
       "config": {}
     };
 
+    const DEADZONE = 0.2;
+
     vegaEmbed("#vis", spec, {mode: "vega-lite"}).then(view => {
       // Access Vega view instance
       const vegaView = view.view;
@@ -95,12 +97,13 @@
       function updateParams() {
         // Poll gamepad for input
         const gamepads = navigator.getGamepads();
-        if (gamepads && gamepads[1]) {
-          const gamepad = gamepads[1];
+        if (gamepads && gamepads[0]) {
+          const gamepad = gamepads[0];
+          
 
           // Adjust rotate0 and rotate1 based on axis movements
-          gamepadInput.rotate0 += gamepad.axes[0] * 2; // Left-right axis
-          gamepadInput.rotate1 += gamepad.axes[2] * 2; // Up-down axis
+          gamepadInput.rotate0 += applyDeadzone(gamepad.axes[0]) * 2; // Left-right axis
+          gamepadInput.rotate1 += applyDeadzone(gamepad.axes[1]) * -2; // Up-down axis
           if (gamepad.buttons[15].pressed) { // D-pad right
               gamepadInput.earthquakeSize += 0.1;
           }
@@ -129,6 +132,11 @@
       // Start the loop
       updateParams();
     }).catch(console.error);
+
+
+    function applyDeadzone(value){
+      return Math.abs(value) > DEADZONE ? value : 0;
+    }
 
 </script>
 </body>
