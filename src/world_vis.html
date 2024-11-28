@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vega@5.30.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.20.1"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.26.0"></script>
+</head>
+<body>
+  <div id="vis"></div>
+  <script>
+    const spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "width": 300,
+      "height": 300,
+      "projection": {
+        "type": "orthographic",
+        "rotate": {"expr": "[rotate0, rotate1, 0]"}
+      },
+      "params": [
+        {
+          "name": "rotate0",
+          "value": 0,
+          "bind": {"input": "range", "min": -90, "max": 90, "step": 1}
+        },
+        {
+          "name": "rotate1",
+          "value": 0,
+          "bind": {"input": "range", "min": -90, "max": 90, "step": 1}
+        },
+        {
+          "name": "earthquakeSize",
+          "value": 6,
+          "bind": {"input": "range", "min": 0, "max": 12, "step": 0.1}
+        }
+      ],
+      "layer": [
+        {
+          "data": {"sphere": true},
+          "mark": {"type": "geoshape", "fill": "aliceblue"}
+        },
+        {
+          "data": {
+            "name": "world",
+            "url": "https://raw.githubusercontent.com/vega/vega-datasets/refs/heads/main/data/world-110m.json",
+            "format": {"type": "topojson", "feature": "countries"}
+          },
+          "mark": {"type": "geoshape", "fill": "mintcream", "stroke": "black"}
+        },
+        {
+          "data": {
+            "name": "earthquakes",
+            "url": "https://raw.githubusercontent.com/vega/vega-datasets/refs/heads/main/data/earthquakes.json",
+            "format": {"type": "json", "property": "features"}
+          },
+          "transform": [
+            {"calculate": "datum.geometry.coordinates[0]", "as": "longitude"},
+            {"calculate": "datum.geometry.coordinates[1]", "as": "latitude"},
+            {
+              "filter": "(rotate0 * -1) - 90 < datum.longitude && datum.longitude < (rotate0 * -1) + 90 && (rotate1 * -1) - 90 < datum.latitude && datum.latitude < (rotate1 * -1) + 90"
+            },
+            {"calculate": "datum.properties.mag", "as": "magnitude"}
+          ],
+          "mark": {"type": "circle", "color": "red", "opacity": 0.25},
+          "encoding": {
+            "longitude": {"field": "longitude", "type": "quantitative"},
+            "latitude": {"field": "latitude", "type": "quantitative"},
+            "size": {
+              "legend": null,
+              "field": "magnitude",
+              "type": "quantitative",
+              "scale": {
+                "type": "sqrt",
+                "domain": [0, 100],
+                "range": [0, {"expr": "pow(earthquakeSize, 3)"}]
+              }
+            },
+            "tooltip": [{"field": "magnitude"}]
+          }
+        }
+      ],
+      "config": {}
+    };
+
+    vegaEmbed("#vis", spec, {mode: "vega-lite"}).then(view => {
+      // Access Vega view instance
+      const vegaView = view.view;
+
+      // Gamepad input tracking
+      const gamepadInput = {
+        rotate0: 0,
+        rotate1: 0,
+        earthquakeSize: 6
+      };
+
+      function updateParams() {
+        // Poll gamepad for input
+        const gamepads = navigator.getGamepads();
+        if (gamepads && gamepads[1]) {
+          const gamepad = gamepads[1];
+
+          // Adjust rotate0 and rotate1 based on axis movements
+          gamepadInput.rotate0 += gamepad.axes[0] * 2; // Left-right axis
+          gamepadInput.rotate1 += gamepad.axes[2] * 2; // Up-down axis
+          if (gamepad.buttons[15].pressed) { // D-pad right
+              gamepadInput.earthquakeSize += 0.1;
+          }
+          if (gamepad.buttons[14].pressed) { // D-pad left
+              gamepadInput.earthquakeSize -= 0.1;
+          }
+
+          gamepadInput.rotate0 = Math.max(-90, Math.min(90, gamepadInput.rotate0));
+          gamepadInput.rotate1 = Math.max(-90, Math.min(90, gamepadInput.rotate1));
+          gamepadInput.earthquakeSize = Math.max(0, Math.min(12, gamepadInput.earthquakeSize));
+
+          // Update Vega-Lite params
+          vegaView.signal('rotate0', gamepadInput.rotate0);
+          vegaView.signal('rotate1', gamepadInput.rotate1);
+          vegaView.signal('earthquakeSize', gamepadInput.earthquakeSize);
+
+
+          // Trigger Vega to update
+          vegaView.runAsync();
+        }
+
+        // Continue the loop
+        requestAnimationFrame(updateParams);
+      }
+
+      // Start the loop
+      updateParams();
+    }).catch(console.error);
+
+</script>
+</body>
+</html>
