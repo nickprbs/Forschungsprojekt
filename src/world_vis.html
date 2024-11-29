@@ -10,8 +10,8 @@
   <script>
     const spec = {
       "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-      "width": 300,
-      "height": 300,
+      "width": 600,
+      "height": 600,
       "projection": {
         "type": "orthographic",
         "rotate": {"expr": "[rotate0, rotate1, 0]"}
@@ -84,23 +84,32 @@
     vegaEmbed("#vis", spec, {mode: "vega-lite"}).then(view => {
       // Access Vega view instance
       const vegaView = view.view;
-
       // Gamepad input tracking
       const gamepadInput = {
         rotate0: 0,
         rotate1: 0,
         earthquakeSize: 6
       };
-
+      function pollForGamepads() {
+        const gamepads = navigator.getGamepads();
+        if (gamepads) {
+          for (let i = 0; i < gamepads.length; i++) {
+            if (gamepads[i]) {
+              console.log("Gamepad detected:", gamepads[i]);
+                return true; 
+              }
+            }
+          }
+          setTimeout(pollForGamepads, 500);
+      }
       function updateParams() {
         // Poll gamepad for input
         const gamepads = navigator.getGamepads();
-        if (gamepads && gamepads[1]) {
-          const gamepad = gamepads[1];
-
+        if (gamepads && gamepads[0]) {
+          const gamepad = gamepads[0];
           // Adjust rotate0 and rotate1 based on axis movements
           gamepadInput.rotate0 += gamepad.axes[0] * 2; // Left-right axis
-          gamepadInput.rotate1 += gamepad.axes[2] * 2; // Up-down axis
+          gamepadInput.rotate1 += gamepad.axes[1] * 2; // Up-down axis
           if (gamepad.buttons[15].pressed) { // D-pad right
               gamepadInput.earthquakeSize += 0.1;
           }
@@ -125,9 +134,12 @@
         // Continue the loop
         requestAnimationFrame(updateParams);
       }
-
+      while (!pollForGamepads()){
+        
+        updateParams();
+        break;
+      }
       // Start the loop
-      updateParams();
     }).catch(console.error);
 
 </script>
