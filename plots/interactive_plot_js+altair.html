@@ -11,6 +11,10 @@
     #vis.vega-embed details summary {
       position: relative;
     }
+    input[type="range"] {
+            display: none;
+    
+    }
   </style>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega@5"></script>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-lite@5.20.1"></script>
@@ -18,26 +22,86 @@
 </head>
 <body>
   <div id="vis"></div>
+  <div id="threshold-display">Threshold: 5</div>
   <script>
     (function(vegaEmbed) {
-      var spec = {"config": {"view": {"continuousWidth": 400, "continuousHeight": 400}}, 
-                            "layer": [{"data": {"url": "https://cdn.jsdelivr.net/npm/vega-datasets@v1.29.0/data/movies.json"}, 
-                                "mark": {"type": "circle"}, 
-                                "encoding": {"x": {"field": "IMDB_Rating", "title": "IMDB Rating", "type": "quantitative"}, 
-                                            "y": {"field": "Rotten_Tomatoes_Rating", "title": "Rotten Tomatoes Rating", "type": "quantitative"}}, 
-                                "transform": [{"filter": "(datum['IMDB_Rating'] >= threshold)"}]}, 
-                            {"data": {"url": "https://cdn.jsdelivr.net/npm/vega-datasets@v1.29.0/data/movies.json"}, 
-                            "mark": {"type": "circle"}, 
-                            "encoding": {"size": {"aggregate": "count", "scale": {"domain": [0, 160]}, "type": "quantitative"}, 
-                                        "x": {"bin": {"maxbins": 10}, "field": "IMDB_Rating", "type": "quantitative"}, 
-                                        "y": {"bin": {"maxbins": 10}, "field": "Rotten_Tomatoes_Rating", "type": "quantitative"}}, 
-                            "transform": [{"filter": "(datum['IMDB_Rating'] < threshold)"}]}, 
-                            {"data": {"name": "empty"}, 
-                            "mark": {"type": "rule", "color": "gray"}, 
-                            "encoding": {"strokeWidth": {"value": 6}, 
-                                        "x": {"type": "quantitative", "datum": {"expr": "threshold"}}}}], 
-                            "params": [{"name": "threshold", "bind": {"input": "range", "max": 10, "min": 0, "step": 0.1}, "value": 5}], 
-                            "$schema": "https://vega.github.io/schema/vega-lite/v5.20.1.json", "datasets": {"empty": [{}]}};
+      var spec = {
+        "config": 
+          {
+            "view": 
+              {
+                "continuousWidth": 400, 
+                "continuousHeight": 400
+              }
+          }, 
+        "layer": 
+          [
+            {
+              "data": 
+                {
+                  "url": "https://cdn.jsdelivr.net/npm/vega-datasets@v1.29.0/data/movies.json"
+                }, 
+              "mark": 
+                {
+                  "type": "circle"
+                }, 
+              "encoding": 
+                {
+                  "x": 
+                    {
+                      "field": "IMDB_Rating", "title": "IMDB Rating", "type": "quantitative"
+                    },
+                  "y": 
+                    {
+                      "field": "Rotten_Tomatoes_Rating", "title": "Rotten Tomatoes Rating", "type": "quantitative"
+                    }
+                }, 
+              "transform": 
+                [
+                  {
+                    "filter": "(datum['IMDB_Rating'] >= threshold)"
+                  }
+                ]
+            }, 
+            {
+              "data": 
+              {
+                "url": "https://cdn.jsdelivr.net/npm/vega-datasets@v1.29.0/data/movies.json"
+              }, 
+              "mark": 
+              {
+                "type": "circle"
+              }, 
+              "encoding": 
+              {
+                "size": 
+                {
+                  "aggregate": "count", "scale": {"domain": [0, 160]}, "type": "quantitative"
+                }, 
+                "x": 
+                {
+                  "bin": {"maxbins": 10}, 
+                  "field": "IMDB_Rating", 
+                  "type": "quantitative"
+                }, 
+                "y": 
+                {
+                  "bin": {"maxbins": 10}, 
+                  "field": "Rotten_Tomatoes_Rating", 
+                  "type": "quantitative"
+                }
+              }, 
+              "transform": [{"filter": "(datum['IMDB_Rating'] < threshold)"}]
+            }, 
+            {
+              "data": {"name": "empty"}, 
+              "mark": {"type": "rule", "color": "gray"}, 
+              "encoding": {"strokeWidth": {"value": 6}, 
+              "x": {"type": "quantitative", "datum": {"expr": "threshold"}}}
+            }
+          ], 
+          "params": [{"name": "threshold", "bind": {"input": "range", "max": 10, "min": 0, "step": 0.1}, "value": 5}], 
+          "$schema": "https://vega.github.io/schema/vega-lite/v5.20.1.json", "datasets": {"empty": [{}]}};
       var embedOpt = {"mode": "vega-lite"};
 
       function showError(el, error){
@@ -55,6 +119,7 @@
             function updateThreshold(value) {
                 threshold = Math.max(0, Math.min(10, threshold + value));
                 view.signal('threshold', threshold).run();
+                document.getElementById('threshold-display').innerText = `Threshold: ${threshold.toFixed(1)}`;
             }
 
             function handleGamepadInput() {
@@ -71,9 +136,13 @@
                     // Threshold adjustment using the A button
                     if (aPressed) {
                         if (threshold - Math.floor(threshold) < 0.5) {
-                            view.signal('threshold', Math.floor(threshold)).run();
+                            threshold = Math.floor(threshold);
+                            view.signal('threshold', threshold).run();
+                            document.getElementById('threshold-display').innerText = `Threshold: ${threshold.toFixed(1)}`;
                         } else {
-                            view.signal('threshold', Math.ceil(threshold)).run();
+                            threshold = Math.ceil(threshold);
+                            view.signal('threshold', threshold).run();
+                            document.getElementById('threshold-display').innerText = `Threshold: ${threshold.toFixed(1)}`;
                         }
                     }
                 }
