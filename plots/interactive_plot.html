@@ -32,9 +32,21 @@
           throw error;
       }
       const el = document.getElementById('vis');
-      vegaEmbed("#vis", spec, embedOpt)
-        .catch(error => showError(el, error));
+      vegaEmbed("#vis", spec, embedOpt).then(({view}) => {
+            document.addEventListener('keydown', (event) => {
+                const step = 0.1;
+                let threshold = view.signal('threshold');
+                if (event.key === 'ArrowLeft') {
+                    threshold = Math.max(0, threshold - step);
+                } else if (event.key === 'ArrowRight') {
+                    threshold = Math.min(10, threshold + step);
+                }
+                view.signal('threshold', threshold).run();
+            });
+        });
     })(vegaEmbed);
+
+    
 
   </script>
 </body>
