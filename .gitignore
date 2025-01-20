@@ -163,3 +163,7 @@ cython_debug/
 
 #Mac specific folder properties
 .DS_Store
+
+csv_output
+src/pipeline_test/dask_temp
+src/pipeline_test/datasets
