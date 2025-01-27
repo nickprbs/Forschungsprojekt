@@ -1,10 +1,11 @@
-import xarray as xa             # Used to handle .nc files
-import dask.dataframe as dd
-import altair as alt            # Vega Altair to visualize data
-from vega_datasets import data  # Data used for vega visualization
-import webbrowser               # Access to browser
-import os                       # Access to file system
-from dask.distributed import Client, LocalCluster
+import xarray as xa                                 # Used to handle .nc files
+import dask.dataframe as dd                         # Effitiently load big data files
+from dask.distributed import Client, LocalCluster   # Process data in parallel
+import altair as alt                                # Vega Altair to visualize data
+from vega_datasets import data                      # Data used for vega visualization
+import webbrowser                                   # Access to browser
+import os                                           # Access to file system
+
 import csv
 
 def setup_dask():
@@ -122,9 +123,9 @@ def main():
     generate_json = True if generate_json == 'y' else False
     
     if(csv_creation):
-        #name = str(input("Please enter the name of the dataset\n"))
+        name = str(input("Please enter the name of the dataset\n"))
         print("Creating csv dataset...")
-        #client = setup_dask()
+        client = setup_dask()
         create_csv_dataset(client, "test.csv")
     if(generate_json):
         if (not create_csv_dataset):
