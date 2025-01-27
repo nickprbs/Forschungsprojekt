@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vega@5.30.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.20.1"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.26.0"></script>
+</head>
+<body>
+  <div id="vis"></div>
+  <script>
+    const spec = {
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "Seattle Weather, 2012-2015",
+  "data": {
+    "url": "https://raw.githubusercontent.com/vega/vega-datasets/refs/heads/main/data/seattle-weather.csv"
+  },
+  "vconcat": [
+    {
+      "encoding": {
+        "color": {
+          "condition": {
+            "param": "brush",
+            "title": "Weather",
+            "field": "weather",
+            "type": "nominal",
+            "scale": {
+              "domain": ["sun", "fog", "drizzle", "rain", "snow"],
+              "range": ["#e7ba52", "#a7a7a7", "#aec7e8", "#1f77b4", "#9467bd"]
+            }
+          },
+          "value": "lightgray"
+        },
+        "size": {
+          "title": "Precipitation",
+          "field": "precipitation",
+          "scale": {"domain": [-1, 50]},
+          "type": "quantitative"
+        },
+        "x": {
+          "field": "date",
+          "timeUnit": "monthdate",
+          "title": "Date",
+          "axis": {"format": "%b"}
+        },
+        "y": {
+          "title": "Maximum Daily Temperature (C)",
+          "field": "temp_max",
+          "scale": {"domain": [-5, 40]},
+          "type": "quantitative"
+        }
+      },
+      "width": 600,
+      "height": 300,
+      "mark": "point",
+      "params": [{
+        "name": "brush",
+        "select": {"type": "interval", "encodings": ["x"]}
+      }],
+      "transform": [{"filter": {"param": "click"}}]
+    },
+    {
+      "encoding": {
+        "color": {
+          "condition": {
+            "param": "click",
+            "field": "weather",
+            "scale": {
+              "domain": ["sun", "fog", "drizzle", "rain", "snow"],
+              "range": ["#e7ba52", "#a7a7a7", "#aec7e8", "#1f77b4", "#9467bd"]
+            }
+          },
+          "value": "lightgray"
+        },
+        "x": {"aggregate": "count"},
+        "y": {"title": "Weather", "field": "weather"}
+      },
+      "width": 600,
+      "mark": "bar",
+      "params": [{
+        "name": "click",
+        "select": {"type": "point", "encodings": ["color"]}
+      }],
+      "transform": [{"filter": {"param": "brush"}}]
+    }
+  ]
+}
+
+    vegaEmbed("#vis", spec, {mode: "vega-lite"}).then(view => {
+      // Access Vega view instance
+      const vegaView = view.view;
+      // Gamepad input tracking
+      const gamepadInput = {
+        drizzle: {weather:"drizzle"}
+      };
+      function pollForGamepads() {
+        const gamepads = navigator.getGamepads();
+        if (gamepads) {
+          for (let i = 0; i < gamepads.length; i++) {
+            if (gamepads[i]) {
+              console.log("Gamepad detected:", gamepads[i]);
+                return true; 
+              }
+            }
+          }
+          setTimeout(pollForGamepads, 500);
+      }
+      function updateParams() {
+        // Poll gamepad for input
+        const gamepads = navigator.getGamepads();
+        if (gamepads && gamepads[0]) {
+          const gamepad = gamepads[0];
+          if (gamepad.buttons[0].pressed) { // D-pad right
+            vegaView.signal('weather', );
+
+          }
+          if (gamepad.buttons[14].pressed) { // D-pad left
+              gamepadInput.earthquakeSize -= 0.1;
+          }
+
+          gamepadInput.rotate0 = Math.max(-90, Math.min(90, gamepadInput.rotate0));
+          gamepadInput.rotate1 = Math.max(-90, Math.min(90, gamepadInput.rotate1));
+          gamepadInput.earthquakeSize = Math.max(0, Math.min(12, gamepadInput.earthquakeSize));
+
+          // Update Vega-Lite params
+
+
+          // Trigger Vega to update
+          vegaView.runAsync();
+        }
+
+        // Continue the loop
+        requestAnimationFrame(updateParams);
+      }
+      while (!pollForGamepads()){
+        
+        updateParams();
+        break;
+      }
+      // Start the loop
+    }).catch(console.error);
+
+</script>
+</body>
+</html>
