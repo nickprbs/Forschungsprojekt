@@ -113,40 +113,42 @@
     },
     {
       "data": {
-        "name":"temperature",
-        "url": "file:///Users/jan/Forschungsprojekt/src/yearly_avg_downsampled.csv",
+        "name": "temperature",
+        "url": "https://raw.githubusercontent.com/nickprbs/Forschungsprojekt/refs/heads/main/filtered_file.csv",
         "format": {"type": "csv"}
       },
       "transform": [
-        {"calculate": "datum.geometry.coordinates[0]", "as": "longitude"},
-        {"calculate": "datum.geometry.coordinates[1]", "as": "latitude"},
+        {"calculate": "datum.lon", "as": "longitude"},
+        {"calculate": "datum.lat", "as": "latitude"},
         {
-          "filter": "(rotate0 * -1) - 90 < datum.longitude && datum.longitude < (rotate0 * -1) + 90 && (rotate1 * -1) - 90 < datum.latitude && datum.latitude < (rotate1 * -1) + 90"
-        },
-        {"calculate": "datum.properties.mag", "as": "magnitude"}
+"filter": "(rotate0 * -1) - 90 < datum.longitude && datum.longitude < (rotate0 * -1) + 90 && (rotate1 * -1) - 90 < datum.latitude && datum.latitude < (rotate1 * -1) + 90"},
       ],
-      "mark": {"type": "circle", "color": "red", "opacity": 0.25},
+
+      "mark": "circle",
       "encoding": {
-        "longitude": {"field": "lon", "type": "quantitative"},
-        "latitude": {"field": "lat", "type": "quantitative"},
-        "size": {
-          "legend": null,
+        "longitude": {"field": "longitude", "type": "quantitative"},
+        "latitude": {"field": "latitude", "type": "quantitative"},
+        "color": {
           "field": "tas",
           "type": "quantitative",
           "scale": {
-            "type": "sqrt",
-            "domain": [0, 100],
-            "range": [0, {"expr": "pow(earthquakeSize, 3)"}]
-          }
+            "domain": [270, 300],
+            "scheme": "viridis"
+          },
+          "legend": {"title": "Temperature (K)"}
         },
-        "tooltip": [{"field": "magnitude"}]
+        "tooltip": [
+          {"field": "tas", "type": "quantitative", "title": "Temperature (K)"},
+          {"field": "latitude", "type": "quantitative"},
+          {"field": "longitude", "type": "quantitative"}
+        ],
       }
     }
   ]
 };
 Promise.all([
-  vegaEmbed("#earthquake-vis", earthquakeSpec, {mode: "vega-lite"}),  
-  vegaEmbed("#bar-chart-vis", barChartSpec, {mode: "vega-lite"}) 
+  vegaEmbed("#earthquake-vis", earthquakeSpec),  
+  vegaEmbed("#bar-chart-vis", barChartSpec) 
 ])
   .then(([earthquakeResult, barChartResult]) => {
     let earthquakeView = earthquakeResult.view;  
