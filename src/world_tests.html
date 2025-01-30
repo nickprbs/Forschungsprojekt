@@ -113,9 +113,9 @@
     },
     {
       "data": {
-        "name": "earthquakes",
-        "url": "https://raw.githubusercontent.com/vega/vega-datasets/refs/heads/main/data/earthquakes.json",
-        "format": {"type": "json", "property": "features"}
+        "name":"temperature",
+        "url": "file:///Users/jan/Forschungsprojekt/src/yearly_avg_downsampled.csv",
+        "format": {"type": "csv"}
       },
       "transform": [
         {"calculate": "datum.geometry.coordinates[0]", "as": "longitude"},
@@ -127,11 +127,11 @@
       ],
       "mark": {"type": "circle", "color": "red", "opacity": 0.25},
       "encoding": {
-        "longitude": {"field": "longitude", "type": "quantitative"},
-        "latitude": {"field": "latitude", "type": "quantitative"},
+        "longitude": {"field": "lon", "type": "quantitative"},
+        "latitude": {"field": "lat", "type": "quantitative"},
         "size": {
           "legend": null,
-          "field": "magnitude",
+          "field": "tas",
           "type": "quantitative",
           "scale": {
             "type": "sqrt",
