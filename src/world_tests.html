@@ -73,79 +73,95 @@
   }
 };
 
-    const earthquakeSpec = {
-  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "width": 300,
-  "height": 300,
-  "projection": {
-    "type": "orthographic",
-    "rotate": {"expr": "[rotate0, rotate1, 0]"}
-  },
-  "params": [
-    {
-      "name": "rotate0",
-      "value": 0,
-      "bind": {"input": "range", "min": -90, "max": 90, "step": 1}
+  const earthquakeSpec = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "width": 300,
+    "height": 300,
+    "projection": {
+      "type": "orthographic",
+      "rotate": {"expr": "[rotate0, rotate1, 0]"},
+      "clipAngle": 90
     },
-    {
-      "name": "rotate1",
-      "value": 0,
-      "bind": {"input": "range", "min": -90, "max": 90, "step": 1}
-    },
-    {
-      "name": "earthquakeSize",
-      "value": 6,
-      "bind": {"input": "range", "min": 0, "max": 12, "step": 0.1}
-    }
-  ],
-  "layer": [
-    {
-      "data": {"sphere": true},
-      "mark": {"type": "geoshape", "fill": "aliceblue"}
-    },
-    {
-      "data": {
-        "name": "world",
-        "url": "https://raw.githubusercontent.com/vega/vega-datasets/refs/heads/main/data/world-110m.json",
-        "format": {"type": "topojson", "feature": "countries"}
+    "params": [
+      {
+        "name": "rotate0",
+        "value": 0,
+        "bind": {"input": "range", "min": -90, "max": 90, "step": 1}
       },
-      "mark": {"type": "geoshape", "fill": "mintcream", "stroke": "black"}
-    },
-    {
-      "data": {
-        "name": "temperature",
-        "url": "https://raw.githubusercontent.com/nickprbs/Forschungsprojekt/refs/heads/main/filtered_file.csv",
-        "format": {"type": "csv"}
+      {
+        "name": "rotate1",
+        "value": 0,
+        "bind": {"input": "range", "min": -90, "max": 90, "step": 1}
       },
-      "transform": [
-        {"calculate": "datum.lon", "as": "longitude"},
-        {"calculate": "datum.lat", "as": "latitude"},
-        {
-"filter": "(rotate0 * -1) - 90 < datum.longitude && datum.longitude < (rotate0 * -1) + 90 && (rotate1 * -1) - 90 < datum.latitude && datum.latitude < (rotate1 * -1) + 90"},
-      ],
-
-      "mark": "circle",
-      "encoding": {
-        "longitude": {"field": "longitude", "type": "quantitative"},
-        "latitude": {"field": "latitude", "type": "quantitative"},
-        "color": {
-          "field": "tas",
-          "type": "quantitative",
-          "scale": {
-            "domain": [270, 300],
-            "scheme": "viridis"
-          },
-          "legend": {"title": "Temperature (K)"}
-        },
-        "tooltip": [
-          {"field": "tas", "type": "quantitative", "title": "Temperature (K)"},
-          {"field": "latitude", "type": "quantitative"},
-          {"field": "longitude", "type": "quantitative"}
-        ],
+      {
+        "name": "time",
+        "value": 2015,
+        "bind": {"input": "range", "min": 2015, "max": 2099, "step": 1}
       }
-    }
-  ]
-};
+    ],
+    "layer": [
+      {
+        "data": {"sphere": true},
+        "mark": {"type": "geoshape", "fill": "aliceblue"}
+      },
+      {
+        "data": {
+          "name": "world",
+          "url": "https://raw.githubusercontent.com/vega/vega-datasets/refs/heads/main/data/world-110m.json",
+          "format": {"type": "topojson", "feature": "countries"}
+        },
+        "mark": {"type": "geoshape", "fill": "mintcream", "stroke": "black"}
+      },
+      {
+        "data": {
+          "name": "temperature",
+          "url": "https://raw.githubusercontent.com/nickprbs/Forschungsprojekt/refs/heads/main/yearly_avg_downsampled.csv",
+          "format": {"type": "csv"}
+        },
+        "transform": [
+          {"calculate": "datum.lon", "as": "longitude"},
+          {"calculate": "datum.lat", "as": "latitude"},
+          {
+            "calculate": "timeParse(datum.time, '%Y-%m-%d')",
+            "as": "parsed_date"
+          },
+          {
+            "calculate": "year(datum.parsed_date)",
+            "as": "year"
+          },
+          {"filter": "datum.year == time"},
+          {
+            "calculate": "datum.longitude >= 180 ? datum.longitude -360 : datum.longitude",
+            "as": "longitude"
+          },
+          {
+            "filter": "(rotate0 * -1) - 90 < datum.longitude && datum.longitude < (rotate0 * -1) + 90 && (rotate1 * -1) - 90 < datum.latitude && datum.latitude < (rotate1 * -1) + 90"
+          },
+        ],
+
+        "mark": "circle",
+        "encoding": {
+          "longitude": {"field": "longitude", "type": "quantitative"},
+          "latitude": {"field": "latitude", "type": "quantitative"},
+          "color": {
+            "field": "tas",
+            "type": "quantitative",
+            "scale": {
+              "domain": [270, 300],
+              "scheme": "viridis"
+            },
+            "legend": {"title": "Temperature (K)"}
+          },
+          "tooltip": [
+            {"field": "tas", "type": "quantitative", "title": "Temperature (K)"},
+            {"field": "latitude", "type": "quantitative"},
+            {"field": "longitude", "type": "quantitative"},
+            {"field": "year", "type": "quantitative", "title": "Year"}
+          ],
+        }
+      }
+    ]
+  };
 Promise.all([
   vegaEmbed("#earthquake-vis", earthquakeSpec),  
   vegaEmbed("#bar-chart-vis", barChartSpec) 
@@ -159,13 +175,13 @@ Promise.all([
       if(access!=null){
         access= access.or;
         if (access.find(element=>element.a==="A")){
-          earthquakeView.signal('earthquakeSize', 12);
+          earthquakeView.signal('time', 2030);
         }
         if(access.find(element=>element.a==="I")){
           earthquakeView.signal('rotate0', 90);
         }
       }else {
-        earthquakeView.signal('earthquakeSize', 6);
+        earthquakeView.signal('time', 2015);
         earthquakeView.signal('rotate0', 0);
       }
       earthquakeView.runAsync();
