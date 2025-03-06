@@ -59,31 +59,38 @@ while running:
                 if buttons[14] == 1:
                     state = 1
                     background_image = pygame.image.load("Prototyp\img\S1.jpg")
+                    selection = 0
                 elif buttons[12] == 1:
                     state = 2
                     background_image = pygame.image.load("Prototyp\img\S2.jpg")
+                    selection = 0
             elif state == 1:
                 if buttons[13] == 1:
                     state = 0
                     background_image = pygame.image.load("Prototyp\img\start.jpg")
+                    selection = 0
                 elif buttons[12] == 1:
                     state = 3
                     background_image = pygame.image.load("Prototyp\img\S3.jpg")
+                    selection = 0
             elif state == 2:
                 if buttons[14] == 1:
                     state = 3
                     background_image = pygame.image.load("Prototyp\img\S3.jpg")
+                    selection = 0
                 elif buttons[11] == 1:
                     state = 0 
                     background_image = pygame.image.load("Prototyp\img\start.jpg")
+                    selection = 0
             elif state == 3:
                 if buttons[13] == 1:
                     state = 2
                     background_image = pygame.image.load("Prototyp\img\S2.jpg")
+                    selection = 0
                 elif buttons[11] == 1:
                     state = 1
                     background_image = pygame.image.load("Prototyp\img\S1.jpg")
-            selection = 0
+                    selection = 0
             selected = False
 
         #print(event)
@@ -99,8 +106,8 @@ while running:
     x_button = buttons[0]
     circle_button = buttons[1]
     square_button = buttons[2]
-    right_bumper = buttons[5]
-    left_bumper = buttons[4]
+    right_bumper = buttons[10]
+    left_bumper = buttons[9]
     
     if state == 0:
         if left_stick_x < -0.4 and left_stick_y < -0.4:
