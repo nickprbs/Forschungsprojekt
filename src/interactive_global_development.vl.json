@@ -1,0 +1,108 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "A scatter plot of global health statistics with region filtering and country highlighting.",
+  "data": {"url": "https://raw.githubusercontent.com/vega/vega-datasets/main/data/gapminder.json"},
+  "width": 800,
+  "height": 500,
+  "params": [
+    {
+      "name": "filterRegion",
+      "value": null,
+      "bind": {
+        "name": "Region",
+        "input": "select",
+        "options": [
+          null,
+          "South Asia",
+          "Europe & Central Asia",
+          "Sub-Saharan Africa",
+          "Americas",
+          "East Asia & Pacific",
+          "Middle East & North Africa"
+        ]
+      }
+    },
+    {
+      "name": "focusCountry",
+      "value": null
+    },
+    {
+      "name": "year",
+      "value": 1955,
+      "bind": {
+        "name": "Year",
+        "input": "range",
+        "min": 1955,
+        "max": 2005,
+        "step": 5
+      }
+    }
+  ],
+  "transform": [
+    {
+      "filter": {
+        "or": [
+          {"param": "filterRegion", "empty": true},
+          {"field": "name", "equal": {"param": "filterRegion"}}
+        ]
+      }
+    },
+    {
+      "filter": {
+        "or": [
+          {"param": "focusCountry", "empty": true},
+          {"field": "country", "equal": {"param": "focusCountry"}}
+        ]
+      }
+    },
+    {"filter": {"field": "year", "equal": {"param": "year"}}}
+  ],
+  "layer": [
+    {
+      "mark": "circle",
+      "encoding": {
+        "x": {
+          "field": "fertility",
+          "type": "quantitative",
+          "scale": {"domain": [0, 9]},
+          "axis": {"title": "Fertility"}
+        },
+        "y": {
+          "field": "life_expect",
+          "type": "quantitative",
+          "scale": {"domain": [20, 85]},
+          "axis": {"title": "Life Expectancy"}
+        },
+        "color": {
+          "field": "name",
+          "type": "nominal",
+          "title": "Region",
+          "legend": {"orient": "right"}
+        },
+        "tooltip": [
+          {"field": "country", "title": "Country"},
+          {"field": "fertility", "title": "Fertility"},
+          {"field": "life_expect", "title": "Life Expectancy"},
+          {"field": "year", "title": "Year"}
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "fontWeight": "bold",
+        "yOffset": -10,
+        "fontSize": 12
+      },
+      "transform": [
+        {"filter": {"not": {"param": "focusCountry", "empty": true}}}
+      ],
+      "encoding": {
+        "text": {"field": "country"},
+        "x": {"field": "fertility", "type": "quantitative"},
+        "y": {"field": "life_expect", "type": "quantitative"},
+        "color": {"field": "name", "type": "nominal"}
+      }
+    }
+  ]
+}
