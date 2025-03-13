@@ -1,5 +1,4 @@
 altair==5.5.0
-#geopandas==1.0.1 --> Not sure yet
 ipykernel==6.29.5
 ipython==8.31.0
 pandas==2.2.3
