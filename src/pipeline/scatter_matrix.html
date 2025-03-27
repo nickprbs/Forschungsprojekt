@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    #vis.vega-embed {
+      width: 100%;
+      display: flex;
+    }
+
+    #vis.vega-embed details,
+    #vis.vega-embed details summary {
+      position: relative;
+    }
+  </style>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-lite@5.20.1"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+</head>
+<body>
+  <div id="vis"></div>
+  <script>
+    (function(vegaEmbed) {
+      var spec = {"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}}, "repeat": {"column": ["tas", "lon", "lat"], "row": ["lat", "lon", "tas"]}, "spec": {"data": {"url": "https://raw.githubusercontent.com/nickprbs/Forschungsprojekt/refs/heads/main/yearly_avg_downsampled.csv"}, "mark": {"type": "circle"}, "encoding": {"color": {"field": "tas", "scale": {"scheme": "viridis"}, "title": "TAS", "type": "quantitative"}, "x": {"field": {"repeat": "column"}, "type": "quantitative"}, "y": {"field": {"repeat": "row"}, "type": "quantitative"}}, "height": 150, "name": "view_12", "transform": [{"calculate": "toNumber(year(datum.time))", "as": "year"}, {"filter": {"param": "Select Year"}}], "width": 150}, "params": [{"name": "Select Year", "select": {"type": "point", "fields": ["year"]}, "bind": {"input": "range", "max": 2099, "min": 2015, "name": "Year", "step": 1}, "value": 2015, "views": ["view_12_child__row_latcolumn_tas", "view_12_child__row_latcolumn_lon", "view_12_child__row_latcolumn_lat", "view_12_child__row_loncolumn_tas", "view_12_child__row_loncolumn_lon", "view_12_child__row_loncolumn_lat", "view_12_child__row_tascolumn_tas", "view_12_child__row_tascolumn_lon", "view_12_child__row_tascolumn_lat"]}, {"name": "param_14", "select": {"type": "interval", "encodings": ["x", "y"]}, "bind": "scales", "views": ["view_12_child__row_latcolumn_tas", "view_12_child__row_latcolumn_lon", "view_12_child__row_latcolumn_lat", "view_12_child__row_loncolumn_tas", "view_12_child__row_loncolumn_lon", "view_12_child__row_loncolumn_lat", "view_12_child__row_tascolumn_tas", "view_12_child__row_tascolumn_lon", "view_12_child__row_tascolumn_lat"]}], "$schema": "https://vega.github.io/schema/vega-lite/v5.20.1.json"};
+      var embedOpt = {"mode": "vega-lite"};
+
+      function showError(el, error){
+          el.innerHTML = ('<div style="color:red;">'
+                          + '<p>JavaScript Error: ' + error.message + '</p>'
+                          + "<p>This usually means there's a typo in your chart specification. "
+                          + "See the javascript console for the full traceback.</p>"
+                          + '</div>');
+          throw error;
+      }
+      const el = document.getElementById('vis');
+      vegaEmbed("#vis", spec, embedOpt)
+        .catch(error => showError(el, error));
+    })(vegaEmbed);
+
+  </script>
+</body>
+</html>
