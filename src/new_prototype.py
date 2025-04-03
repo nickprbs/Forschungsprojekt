@@ -70,6 +70,11 @@ while running:
                     current_image = "20"
                     display_image(images[current_image])
                     print("❌ X button → Showing image 20")
+                elif current_image == "35":
+                    current_image = "36"
+                    display_image(images[current_image])
+                    print("❌ X button → Showing image 36")
+
 
             elif event.button == 6:  # Options button
                 if current_image == "21":
@@ -88,6 +93,8 @@ while running:
                     current_image = "18"
                 elif current_image == "26":
                     current_image = "27"
+                elif current_image == "34":
+                    current_image = "35"
                 if current_image in images:
                     display_image(images[current_image])
                     print(f"🟦 Square → Showing image {current_image}")
@@ -97,6 +104,8 @@ while running:
                     current_image = "13"
                 elif current_image in ["25", "4"]:
                     current_image = "2"
+                elif current_image in ["33", "27"]:
+                    current_image = "26"
                 else:
                     current_image = "1"
                 display_image(images[current_image])
@@ -119,6 +128,8 @@ while running:
                     current_image = "23"
                 elif current_image == "30":
                     current_image = "31"
+                elif current_image == "26":
+                    current_image = "34"
                 display_image(images[current_image])
                 print(f"⬇️ D-Pad DOWN → Showing image {current_image}")
 
@@ -150,6 +161,11 @@ while running:
                     display_image(images[current_image])
                     print("👉 R1 → Showing image 30")
                     print("👉 R1 → Showing image 11")
+                elif current_image == "37":
+                    current_image = "36"
+                    display_image(images[current_image])
+                    print("👉 R1 → Showing image 36")
+
 
             elif event.button == 7:  # L3
                 left_stick_pressed = True
@@ -196,6 +212,10 @@ while running:
                     current_image = "30"
                     display_image(images[current_image])
                     print("👈 L1 → Showing image 30")
+                elif current_image == "36":
+                    current_image = "37"
+                    display_image(images[current_image])
+                    print("👈 L1 → Showing image 37")
 
             elif event.button == 1:  # Circle
                 if current_image == "5":
