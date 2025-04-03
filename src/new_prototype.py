@@ -93,7 +93,7 @@ while running:
                     current_image = "18"
                 elif current_image == "26":
                     current_image = "27"
-                elif current_image == "34":
+                elif current_image in ["34", "44"]:
                     current_image = "35"
                 if current_image in images:
                     display_image(images[current_image])
@@ -165,9 +165,17 @@ while running:
                     current_image = "36"
                     display_image(images[current_image])
                     print("👉 R1 → Showing image 36")
+                elif current_image == "39":
+                    current_image = "40"
+                    display_image(images[current_image])
+                    print("👉 R1 → Showing image 40")
 
 
             elif event.button == 7:  # L3
+                if current_image == "42":
+                   current_image = "43"
+                   display_image(images[current_image])
+                   print("🎮 L3 → Showing image 43")
                 left_stick_pressed = True
                 if right_stick_pressed and not combo_triggered:
                     if current_image == "4":
@@ -182,14 +190,21 @@ while running:
                         current_image = "29"
                     elif current_image == "31":
                         current_image = "32"
-
+                    elif current_image == "41":
+                        current_image = "42"
+                        
                     display_image(images[current_image])
                     print(f"🎮 L3 + R3 → Showing image {current_image}")
                     combo_triggered = True
 
             elif event.button == 8:  # R3
                 right_stick_pressed = True
-                if left_stick_pressed and not combo_triggered:
+                if current_image == "34" and not left_stick_pressed:
+                    current_image = "44"
+                    display_image(images[current_image])
+                    print("🎮 R3 → Showing image 44")
+                    combo_triggered = True
+                elif left_stick_pressed and not combo_triggered:
                     if current_image == "4":
                         current_image = "5"
                     elif current_image == "15":
@@ -202,7 +217,10 @@ while running:
                         current_image = "29"
                     elif current_image == "31":
                         current_image = "32"
-
+                    elif current_image == "36":
+                        current_image = "38"
+                    elif current_image == "41":
+                        current_image = "42"
                     display_image(images[current_image])
                     print(f"🎮 L3 + R3 → Showing image {current_image}")
                     combo_triggered = True
@@ -216,6 +234,11 @@ while running:
                     current_image = "37"
                     display_image(images[current_image])
                     print("👈 L1 → Showing image 37")
+                elif current_image == "38":
+                    current_image = "39"
+                    display_image(images[current_image])
+                    print("👈 L1 → Showing image 39")
+
 
             elif event.button == 1:  # Circle
                 if current_image == "5":
@@ -234,8 +257,8 @@ while running:
     if r2_value > 0.5:
         if current_image == "11":
             current_image = "12"
-        elif current_image == "11":
-            current_image = "12"
+        elif current_image == "40":
+            current_image = "41"
         display_image(images[current_image])
         print(f"👉 R2 (axis 5) → Showing image {current_image}")
 
