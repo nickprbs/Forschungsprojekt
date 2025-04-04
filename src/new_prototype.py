@@ -106,6 +106,8 @@ while running:
                     current_image = "2"
                 elif current_image in ["33", "27"]:
                     current_image = "26"
+                elif current_image == "43":
+                    current_image = "34"
                 else:
                     current_image = "1"
                 display_image(images[current_image])
