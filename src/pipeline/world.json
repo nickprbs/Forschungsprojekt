@@ -1,0 +1,74 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": 300,
+  "height": 300,
+  "projection": {
+    "type": "orthographic",
+    "rotate": {"expr": "[longitude, 0]"},
+    "clipAngle": 90
+  },
+  "params": [
+    {
+      "name": "longitude",
+      "value": 0,
+      "bind": {"input": "range", "min": -90, "max": 90, "step": 1}
+    },
+    {
+      "name": "time",
+      "value": 2015,
+      "bind": {"input": "range", "min": 2015, "max": 2099, "step": 1}
+    }
+  ],
+  "layer": [
+    {
+      "data": {"sphere": true},
+      "mark": {"type": "geoshape", "fill": "aliceblue"}
+    },
+    {
+      "data": {
+        "name": "world",
+        "url": "https://raw.githubusercontent.com/vega/vega-datasets/refs/heads/main/data/world-110m.json",
+        "format": {"type": "topojson", "feature": "countries"}
+      },
+      "mark": {"type": "geoshape", "fill": "mintcream", "stroke": "black"}
+    },
+    {
+      "data": {
+        "name": "temperature",
+        "url": "https://raw.githubusercontent.com/nickprbs/Forschungsprojekt/refs/heads/main/yearly_avg_downsampled.csv",
+        "format": {"type": "csv"}
+      },
+      "transform": [
+        {"calculate": "datum.lon", "as": "longitude"},
+        {"calculate": "datum.lat", "as": "latitude"},
+        {"calculate": "timeParse(datum.time, '%Y-%m-%d')", "as": "parsed_date"},
+        {"calculate": "year(datum.parsed_date)", "as": "year"},
+        {"filter": "datum.year == time"},
+        {
+          "calculate": "datum.longitude >= 180 ? datum.longitude -360 : datum.longitude",
+          "as": "longitude"
+        },
+        {
+          "filter": "(longitude * -1) - 90 < datum.longitude && datum.longitude < (longitude * -1) + 90"
+        }
+      ],
+      "mark": "circle",
+      "encoding": {
+        "longitude": {"field": "longitude", "type": "quantitative"},
+        "latitude": {"field": "latitude", "type": "quantitative"},
+        "color": {
+          "field": "tas",
+          "type": "quantitative",
+          "scale": {"domain": [270, 300], "scheme": "viridis"},
+          "legend": {"title": "Temperature (K)"}
+        },
+        "tooltip": [
+          {"field": "tas", "type": "quantitative", "title": "Temperature (K)"},
+          {"field": "latitude", "type": "quantitative"},
+          {"field": "longitude", "type": "quantitative"},
+          {"field": "year", "type": "quantitative", "title": "Year"}
+        ]
+      }
+    }
+  ]
+}
