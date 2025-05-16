@@ -1,3 +1,4 @@
+import time
 import xarray as xa                                 # Used to handle .nc files
 import dask.dataframe as dd                         # Effitiently load big data files
 from dask.distributed import Client, LocalCluster   # Process data in parallel
@@ -109,8 +110,9 @@ if __name__ == '__main__':
         create_csv_dataset(client)
     # Cleanup temporary directories
     finally:
+        client.shutdown()
         client.close()
         shutil.rmtree('./src/csv_output', ignore_errors=True)
-        
+        shutil.rmtree('./src/dask_temp', ignore_errors=True)
         
     
