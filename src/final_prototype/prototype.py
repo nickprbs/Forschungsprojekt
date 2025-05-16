@@ -8,13 +8,14 @@ from pygame.locals import *
 pygame.init()
 
 # Window settings
-WIDTH, HEIGHT = 1200, 800
+WIDTH, HEIGHT = 1220, 780
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Sketch Viewer")
 
-# Image loading
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 IMAGE_DIR = os.path.join(BASE_DIR, "template")
+print(f"🔍 Looking for images in: {IMAGE_DIR}")
+
 
 # Load and sort .png images with number-based prefixes
 images = {}
@@ -841,6 +842,5 @@ while running:
             square_l2_combo_triggered = True
 
 
-    
 
 pygame.quit()
