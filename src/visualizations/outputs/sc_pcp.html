@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <style>
+    #vis.vega-embed {
+      width: 100%;
+      display: flex;
+    }
+
+    #vis.vega-embed details,
+    #vis.vega-embed details summary {
+      position: relative;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.20.1"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+</head>
+
+<body>
+  <div id="vis"></div>
+  <script>
+    const pcp_spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.20.1.json",
+      "config": {
+        "view": {
+          "continuousWidth": 300,
+          "continuousHeight": 300
+        }
+      },
+      "data": {
+        "url": "https://raw.githubusercontent.com/nickprbs/Forschungsprojekt/refs/heads/main/yearly_avg_downsampled.csv"
+      },
+      "mark": {
+        "type": "line",
+        "opacity": 0.5
+      },
+      // Simulate interval filter by condition on lat values
+      "encoding": {
+        "color": {
+          "condition": {
+            "test": "datum.key == 'lat_norm' && datum.value >= 0.00 && datum.value <= 1.00",
+            "field": "tas",
+            "type": "quantitative",
+            "scale": {
+              "scheme": "viridis"
+            },
+            "legend": null
+          },
+          "value": "lightgray",
+          "legend": null
+        },
+        "detail": {
+          "field": "index",
+          "type": "ordinal"
+        },
+        "x": {
+          "field": "key",
+          "sort": [
+            "lat_norm",
+            "tas_norm",
+            "lon_norm"
+          ],
+          "title": "Attribute",
+          "type": "nominal",
+          "axis": {
+            "labelExpr": "datum.label == 'lat_zoomed' ? 'lat_norm' : datum.label"
+          }
+        },
+        "y": {
+          "field": "value",
+          "title": "Normalized Value",
+          "type": "quantitative"
+        }
+      },
+      "height": 600,
+      "width": 1000,
+      "params": [
+        {
+          "name": "Select Year",
+          "select": {
+            "type": "point",
+            "fields": ["year_num"]
+          },
+          "bind": {
+            "input": "range",
+            "min": 2015,
+            "max": 2099,
+            "step": 1,
+            "name": "Year"
+          },
+          "value": 2015
+        },
+        {
+          "name": "sampleAmount",
+          "value": 500
+        }
+      ],
+      "transform": [
+        { "window": [{ "op": "row_number", "as": "index" }] },
+        { "calculate": "toNumber(year(datum.time))", "as": "year_num" },
+        { "calculate": "toNumber(datum.lat)", "as": "lat_num" },
+        { "calculate": "toNumber(datum.lon)", "as": "lon_num" },
+        {
+          "joinaggregate": [
+            { "op": "min", "field": "year_num", "as": "min_year" },
+            { "op": "max", "field": "year_num", "as": "max_year" },
+            { "op": "min", "field": "lat_num", "as": "min_lat" },
+            { "op": "max", "field": "lat_num", "as": "max_lat" },
+            { "op": "min", "field": "lon_num", "as": "min_lon" },
+            { "op": "max", "field": "lon_num", "as": "max_lon" },
+            { "op": "min", "field": "tas", "as": "min_tas" },
+            { "op": "max", "field": "tas", "as": "max_tas" }
+          ]
+        },
+        { "calculate": "(datum.year_num - datum.min_year) / (datum.max_year - datum.min_year)", "as": "year_norm" },
+        { "calculate": "(datum.lat_num - datum.min_lat) / (datum.max_lat - datum.min_lat)", "as": "lat_norm" },
+        { "calculate": "(datum.lon_num - datum.min_lon) / (datum.max_lon - datum.min_lon)", "as": "lon_norm" },
+        { "calculate": "(datum.tas - datum.min_tas) / (datum.max_tas - datum.min_tas)", "as": "tas_norm" },
+        // Simulate 'Zoom' for axes by applying a sigmoid function to give values around f(x)=0.5 more optic room
+        { "calculate": "1 / (1 + exp(-10 * (datum.lat_norm - 0.5)))", "as": "lat_norm" },
+        { "calculate": "1 / (1 + exp(-10 * (datum.tas_norm - 0.5)))", "as": "tas_norm" },
+
+        { "filter": { "param": "Select Year" } },
+
+        // Pseudorandom sampling to create reproducible samples across all data values
+        {
+          "joinaggregate": [
+            { "op": "count", "field": "index", "as": "count_year" }
+          ],
+          "groupby": ["year_num"]
+        },
+        {
+          "window": [{ "op": "row_number", "as": "index_in_year" }],
+          "groupby": ["year_num"]
+        },
+        // Calculate a step (at least 1)
+        { "calculate": "max(1, floor(datum.count_year / sampleAmount))", "as": "step" },
+        // Filter only every step-th row
+        { "filter": "datum.index_in_year % datum.step === 1" },
+
+        { "fold": ["lat_norm", "tas_norm", "lon_norm"] }
+      ]
+    };
+
+    vegaEmbed("#vis", pcp_spec, { mode: "vega-lite" })
+      .catch(error => {
+        const el = document.getElementById('vis');
+        el.innerHTML = (
+          '<div style="color:red;">' +
+          '<p>JavaScript Error: ' + error.message + '</p>' +
+          '<p>This usually means there’s a typo in your chart specification. ' +
+          'See the javascript console for the full traceback.</p>' +
+          '</div>'
+        );
+        console.error(error);
+      });
+  </script>
+</body>
+
+</html>

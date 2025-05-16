@@ -166,4 +166,3 @@ cython_debug/
 
 csv_output
 src/dask_temp
-src/datasets

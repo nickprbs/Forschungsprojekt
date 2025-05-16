@@ -3,6 +3,7 @@ import dask.dataframe as dd                         # Effitiently load big data 
 from dask.distributed import Client, LocalCluster   # Process data in parallel
 import os                                           # Access to file system
 import csv
+import shutil
 
 def setup_dask():
     """
@@ -24,8 +25,9 @@ def create_csv_dataset(client):
     """
     print("Which .nc dataset would you like to use?")
     files = os.listdir("../")
+    print(os.path.abspath('../'))
     nc_files = []
-    # Retrieve all nc files from the parent directory
+    # Retrieve all nc files from the parent directory of the repository
     for file in files:
         if file.endswith(".nc"):
             nc_files.append(file)
@@ -56,13 +58,14 @@ def create_csv_dataset(client):
     print(f"Number of rows after cleaning: {len(dataset_dd_clean)}")
 
     # Write data in csv-files (partitioned)
-    output_dir = "csv_output"
+    output_dir = "./src/csv_output"
     os.makedirs(output_dir, exist_ok=True)
     dataset_dd_clean.to_csv(os.path.join(output_dir, "data_subset_*.csv"), index=False, compute=True)
     print("Dataset successfully converted to CSV files.")
     os.makedirs("./src/datasets", exist_ok=True)
     output_path = os.path.join("./src/datasets", f"{file.removesuffix('.nc')}.csv")
-    combine_csv_files("./csv_output", output_path)
+    combine_csv_files("./src/csv_output", output_path)
+    
     
     
 def combine_csv_files(input_dir, output_file):
@@ -95,11 +98,19 @@ def combine_csv_files(input_dir, output_file):
                 
                 for row in reader:
                     writer.writerow(row)
-            os.remove(file)        
+            os.remove(file)   
             
     print(f"all files have been merged into {output_file}")
     
 #run code
 if __name__ == '__main__':
-    client = setup_dask()
-    create_csv_dataset(client)
+    try:
+        client = setup_dask()
+        create_csv_dataset(client)
+    # Cleanup temporary directories
+    finally:
+        client.close()
+        shutil.rmtree('./src/csv_output', ignore_errors=True)
+        
+        
+    
