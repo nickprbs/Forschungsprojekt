@@ -77,8 +77,6 @@ clusters = [active_cluster] # Liste von Clustern: [('placed_shapes_cluster0', 'p
 cluster_cursor = 0 
 building_mode = False
 
-
-
 def select_cluster(cluster_cursor):
     global active_cluster, placed_shapes, placed_regions, placed_icons, new_cluster
     if cluster_cursor < len(clusters):
