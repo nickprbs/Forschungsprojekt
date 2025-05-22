@@ -48,6 +48,7 @@ def draw_dashed_rect(surface, color, rect, dash_length=5):
 
 
 def main():
+    selected_count = 0
     pygame.init()
     pygame.joystick.init()
 
@@ -102,18 +103,24 @@ def main():
                 if event.button == BUTTON_X and not interval_mode:
                     if cursor_idx in selected:
                         selected.remove(cursor_idx)
-
+                        selected_count -= 1
+                        
                     else:
+                        selected_count += 1
                         selected.add(cursor_idx)
 
                 # Inrtervall-Modus toggeln (L3 + R3)
                 if event.button in (BUTTON_R3, BUTTON_L3) and (joystick.get_button(BUTTON_L3) and joystick.get_button(BUTTON_R3)):
                     if not interval_mode:
                         # Öffnen: Verwende vorheriges Intervall falls vorhanden
+
                         interval_mode = True
                         if last_interval_start is not None and last_interval_end is not None:
                             interval_start = last_interval_start
                             interval_end = last_interval_end
+                            last_interval_start = None
+                            last_interval_end = None
+                            selected -= set(range(interval_start, interval_end + 1))
                         else:
                             mid = BAR_COUNT // 2
                             interval_start = interval_end = mid
@@ -130,7 +137,6 @@ def main():
                             selected |= (set(range(BAR_COUNT)) - rng)
                         interval_mode = False
                         interval_start = interval_end = None
-                        invert_interval = False
 
                 # Intervall invertieren (R3 einzeln)
                 if interval_mode and event.button == BUTTON_R3 and not joystick.get_button(BUTTON_L3):
