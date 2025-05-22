@@ -105,7 +105,7 @@ def main():
                     else:
                         selected.add(cursor_idx)
 
-                # Intervall-Modus toggeln (L3 + R3)
+                # Inrtervall-Modus toggeln (L3 + R3)
                 if event.button in (BUTTON_R3, BUTTON_L3) and (joystick.get_button(BUTTON_L3) and joystick.get_button(BUTTON_R3)):
                     if not interval_mode:
                         # Öffnen: Verwende vorheriges Intervall falls vorhanden
