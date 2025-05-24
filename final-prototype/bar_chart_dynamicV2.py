@@ -163,6 +163,21 @@ def main():
                 elif ls_val < -AXIS_THRESHOLD:
                     cursor_idx = (cursor_idx - 1) % BAR_COUNT
                     last_cursor_move = current_time
+                # Zur nächsten Auswahl springen
+                if joystick.get_button(BUTTON_R1):
+                    if selected:
+                        new_cursor = (cursor_idx + 1) % BAR_COUNT
+                        while new_cursor not in selected:
+                            new_cursor = (new_cursor + 1) % BAR_COUNT
+                        cursor_idx = new_cursor
+                        last_cursor_move = current_time
+                if joystick.get_button(BUTTON_L1):
+                    if selected:
+                        new_cursor = (cursor_idx - 1) % BAR_COUNT
+                        while new_cursor not in selected:
+                            new_cursor = (new_cursor - 1) % BAR_COUNT
+                        cursor_idx = new_cursor
+                    last_cursor_move = current_time
         else:
             # LS: Intervall-Verschiebung mit Verzögerung über Chart-Grenzen hinweg
             if current_time - last_bound_move >= BOUND_MOVE_DELAY:
@@ -177,21 +192,21 @@ def main():
 
             # Kontinuierliches Verschieben der Intervalsgrenzen mit Buttons
             if current_time - last_bound_move >= BOUND_MOVE_DELAY:
-                if joystick.get_button(BUTTON_L1) and interval_start < interval_end:
-                    interval_start += 1
+                if joystick.get_button(BUTTON_L1):
+                    interval_start = (interval_start + 1) % BAR_COUNT
                     last_bound_move = current_time
-                if joystick.get_button(BUTTON_R1) and interval_end < BAR_COUNT - 1:
-                    interval_end += 1
+                if joystick.get_button(BUTTON_R1):
+                    interval_end = (interval_end + 1) % BAR_COUNT
                     last_bound_move = current_time
 
             # Kontinuierliches Anpassen der Intervalsgrenzen mit Triggern
             l2_val = joystick.get_axis(L2_AXIS)
-            if current_time - last_bound_move >= BOUND_MOVE_DELAY and l2_val > AXIS_THRESHOLD and interval_start > 0:
-                interval_start -= 1
+            if current_time - last_bound_move >= BOUND_MOVE_DELAY and l2_val > AXIS_THRESHOLD and True:
+                interval_start = (interval_start - 1) % BAR_COUNT 
                 last_bound_move = current_time
             r2_val = joystick.get_axis(R2_AXIS)
-            if current_time - last_bound_move >= BOUND_MOVE_DELAY and r2_val > AXIS_THRESHOLD and interval_end > interval_start:
-                interval_end -= 1
+            if current_time - last_bound_move >= BOUND_MOVE_DELAY and r2_val > AXIS_THRESHOLD:
+                interval_end = (interval_end - 1) % BAR_COUNT
                 last_bound_move = current_time
 
         # ----- Zeichnen -----
@@ -206,8 +221,14 @@ def main():
             if not invert_interval:
                 screen.blit(gray_bg, (0, 0))
                 # Intervall farbig
-                for idx in range(interval_start, interval_end + 1):
-                    screen.blit(bar_color_surfs[idx], bar_rects[idx].topleft)
+                if interval_start <= interval_end:
+                    for idx in range(interval_start, interval_end + 1):
+                        screen.blit(bar_color_surfs[idx], bar_rects[idx].topleft)
+                else: 
+                    for idx in range(interval_start, BAR_COUNT):
+                        screen.blit(bar_color_surfs[idx], bar_rects[idx].topleft)
+                    for idx in range(0, interval_end + 1):
+                        screen.blit(bar_color_surfs[idx], bar_rects[idx].topleft)
                 # normale Auswahl farbig
                 for idx in selected:
                     screen.blit(bar_color_surfs[idx], bar_rects[idx].topleft)
@@ -220,10 +241,27 @@ def main():
                 for idx in selected:
                     screen.blit(bar_color_surfs[idx], bar_rects[idx].topleft)
 
-        # Cursor nur im Normalmodus zeichnen
         if not interval_mode:
+            # Cursor zeichnen   
             cursor_rect = bar_rects[cursor_idx]
             draw_dashed_rect(screen, (255, 0, 0), cursor_rect)
+        else: 
+            # Intervall-Rechteck zeichnen
+            if interval_start <= interval_end:
+                interval_rect = pygame.Rect(bar_rects[interval_start].left, bar_rects[interval_start].top,
+                                             bar_rects[interval_end].right - bar_rects[interval_start].left,
+                                             bar_rects[interval_end].bottom - bar_rects[interval_start].top)
+                draw_dashed_rect(screen, (255, 0, 0), interval_rect)
+            else:
+                interval_rect_left = pygame.Rect(bar_rects[0].left, bar_rects[0].top,
+                                             bar_rects[interval_end].right - bar_rects[0].left,
+                                             bar_rects[interval_end].bottom - bar_rects[0].top)
+                
+                interval_rect_right = pygame.Rect(bar_rects[interval_start].left, bar_rects[interval_start].top,
+                                             bar_rects[16].right - bar_rects[interval_start].left,
+                                             bar_rects[16].bottom - bar_rects[interval_start].top)
+                draw_dashed_rect(screen, (255, 0, 0), interval_rect_left)
+                draw_dashed_rect(screen, (255, 0, 0), interval_rect_right)
 
         pygame.display.flip()
         clock.tick(FPS)
