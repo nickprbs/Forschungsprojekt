@@ -1,1 +1,163 @@
-{"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}}, "data": {"url": "https://raw.githubusercontent.com/nickprbs/Forschungsprojekt/refs/heads/main/yearly_avg_downsampled.csv"}, "mark": {"type": "line", "opacity": 0.5}, "encoding": {"color": {"field": "tas", "scale": {"scheme": "viridis"}, "title": "TAS", "type": "quantitative"}, "detail": {"field": "index", "type": "ordinal"}, "x": {"field": "key", "sort": ["lat_norm", "tas_norm", "lon_norm"], "title": "Attribute", "type": "nominal"}, "y": {"field": "value", "title": "Normalized Value", "type": "quantitative"}}, "height": 600, "params": [{"name": "Select Year", "select": {"type": "point", "fields": ["year_num"]}, "bind": {"input": "range", "max": 2099, "min": 2015, "name": "Year", "step": 1}, "value": 2015}], "transform": [{"window": [{"op": "count", "as": "index"}]}, {"calculate": "toNumber(year(datum.time))", "as": "year_num"}, {"calculate": "toNumber(datum.lat)", "as": "lat_num"}, {"calculate": "toNumber(datum.lon)", "as": "lon_num"}, {"joinaggregate": [{"op": "min", "field": "year_num", "as": "min_year"}, {"op": "max", "field": "year_num", "as": "max_year"}, {"op": "min", "field": "lat_num", "as": "min_lat"}, {"op": "max", "field": "lat_num", "as": "max_lat"}, {"op": "min", "field": "lon_num", "as": "min_lon"}, {"op": "max", "field": "lon_num", "as": "max_lon"}, {"op": "min", "field": "tas", "as": "min_tas"}, {"op": "max", "field": "tas", "as": "max_tas"}]}, {"calculate": "(datum.year_num - datum.min_year) / (datum.max_year - datum.min_year)", "as": "year_norm"}, {"calculate": "(datum.lat_num - datum.min_lat) / (datum.max_lat - datum.min_lat)", "as": "lat_norm"}, {"calculate": "(datum.lon_num - datum.min_lon) / (datum.max_lon - datum.min_lon)", "as": "lon_norm"}, {"calculate": "(datum.tas - datum.min_tas) / (datum.max_tas - datum.min_tas)", "as": "tas_norm"}, {"filter": {"param": "Select Year"}}, {"sample": 500}, {"fold": ["lat_norm", "tas_norm", "lon_norm"]}], "width": 1000, "$schema": "https://vega.github.io/schema/vega-lite/v5.20.1.json"}
+{
+    "config": {
+        "view": {
+            "continuousWidth": 300,
+            "continuousHeight": 300
+        }
+    },
+    "data": {
+        "url": "https://raw.githubusercontent.com/nickprbs/Forschungsprojekt/refs/heads/main/yearly_avg_downsampled.csv"
+    },
+    "mark": {
+        "type": "line",
+        "opacity": 0.5
+    },
+    "encoding": {
+        "color": {
+            "field": "tas",
+            "scale": {
+                "scheme": "viridis"
+            },
+            "title": "TAS",
+            "type": "quantitative"
+        },
+        "detail": {
+            "field": "index",
+            "type": "ordinal"
+        },
+        "x": {
+            "field": "key",
+            "sort": [
+                "lat_norm",
+                "tas_norm",
+                "lon_norm"
+            ],
+            "title": "Attribute",
+            "type": "nominal"
+        },
+        "y": {
+            "field": "value",
+            "title": "Normalized Value",
+            "type": "quantitative"
+        }
+    },
+    "height": 600,
+    "params": [
+        {
+            "name": "Select Year",
+            "select": {
+                "type": "point",
+                "fields": [
+                    "year_num"
+                ]
+            },
+            "bind": {
+                "input": "range",
+                "max": 2099,
+                "min": 2015,
+                "name": "Year",
+                "step": 1
+            },
+            "value": 2015
+        }
+    ],
+    "transform": [
+        {
+            "window": [
+                {
+                    "op": "count",
+                    "as": "index"
+                }
+            ]
+        },
+        {
+            "calculate": "toNumber(year(datum.time))",
+            "as": "year_num"
+        },
+        {
+            "calculate": "toNumber(datum.lat)",
+            "as": "lat_num"
+        },
+        {
+            "calculate": "toNumber(datum.lon)",
+            "as": "lon_num"
+        },
+        {
+            "joinaggregate": [
+                {
+                    "op": "min",
+                    "field": "year_num",
+                    "as": "min_year"
+                },
+                {
+                    "op": "max",
+                    "field": "year_num",
+                    "as": "max_year"
+                },
+                {
+                    "op": "min",
+                    "field": "lat_num",
+                    "as": "min_lat"
+                },
+                {
+                    "op": "max",
+                    "field": "lat_num",
+                    "as": "max_lat"
+                },
+                {
+                    "op": "min",
+                    "field": "lon_num",
+                    "as": "min_lon"
+                },
+                {
+                    "op": "max",
+                    "field": "lon_num",
+                    "as": "max_lon"
+                },
+                {
+                    "op": "min",
+                    "field": "tas",
+                    "as": "min_tas"
+                },
+                {
+                    "op": "max",
+                    "field": "tas",
+                    "as": "max_tas"
+                }
+            ]
+        },
+        {
+            "calculate": "(datum.year_num - datum.min_year) / (datum.max_year - datum.min_year)",
+            "as": "year_norm"
+        },
+        {
+            "calculate": "(datum.lat_num - datum.min_lat) / (datum.max_lat - datum.min_lat)",
+            "as": "lat_norm"
+        },
+        {
+            "calculate": "(datum.lon_num - datum.min_lon) / (datum.max_lon - datum.min_lon)",
+            "as": "lon_norm"
+        },
+        {
+            "calculate": "(datum.tas - datum.min_tas) / (datum.max_tas - datum.min_tas)",
+            "as": "tas_norm"
+        },
+        {
+            "filter": {
+                "param": "Select Year"
+            }
+        },
+        {
+            "sample": 500
+        },
+        {
+            "fold": [
+                "lat_norm",
+                "tas_norm",
+                "lon_norm"
+            ]
+        }
+    ],
+    "width": 1000,
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.20.1.json"
+}
