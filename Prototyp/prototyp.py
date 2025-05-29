@@ -33,7 +33,7 @@ ps_controller = pygame.joystick.Joystick(0)
 ps_controller.init()
 
 width, height = 1200, 800
-background_image =  pygame.image.load("Prototyp\img\start.jpg")
+background_image =  pygame.image.load("Prototyp/img/start.jpg")
 background_image = pygame.transform.scale(background_image, (width, height))
 
 screen = pygame.display.set_mode((width, height))
@@ -58,38 +58,38 @@ while running:
             if state == 0:
                 if buttons[14] == 1:
                     state = 1
-                    background_image = pygame.image.load("Prototyp\img\S1.jpg")
+                    background_image = pygame.image.load("Prototyp/img/S1.jpg")
                     selection = 0
                 elif buttons[12] == 1:
                     state = 2
-                    background_image = pygame.image.load("Prototyp\img\S2.jpg")
+                    background_image = pygame.image.load("Prototyp/img/S2.jpg")
                     selection = 0
             elif state == 1:
                 if buttons[13] == 1:
                     state = 0
-                    background_image = pygame.image.load("Prototyp\img\start.jpg")
+                    background_image = pygame.image.load("Prototyp/img/start.jpg")
                     selection = 0
                 elif buttons[12] == 1:
                     state = 3
-                    background_image = pygame.image.load("Prototyp\img\S3.jpg")
+                    background_image = pygame.image.load("Prototyp/img/S3.jpg")
                     selection = 0
             elif state == 2:
                 if buttons[14] == 1:
                     state = 3
-                    background_image = pygame.image.load("Prototyp\img\S3.jpg")
+                    background_image = pygame.image.load("Prototyp/img/S3.jpg")
                     selection = 0
                 elif buttons[11] == 1:
                     state = 0 
-                    background_image = pygame.image.load("Prototyp\img\start.jpg")
+                    background_image = pygame.image.load("Prototyp/img/start.jpg")
                     selection = 0
             elif state == 3:
                 if buttons[13] == 1:
                     state = 2
-                    background_image = pygame.image.load("Prototyp\img\S2.jpg")
+                    background_image = pygame.image.load("Prototyp/img/S2.jpg")
                     selection = 0
                 elif buttons[11] == 1:
                     state = 1
-                    background_image = pygame.image.load("Prototyp\img\S1.jpg")
+                    background_image = pygame.image.load("Prototyp/img/S1.jpg")
                     selection = 0
             selected = False
 
@@ -111,95 +111,95 @@ while running:
     
     if state == 0:
         if left_stick_x < -0.4 and left_stick_y < -0.4:
-            background_image = pygame.image.load("prototyp\img\S0_LU.jpg")
+            background_image = pygame.image.load("prototyp/img/S0_LU.jpg")
         elif left_stick_x > 0.4 and left_stick_y < -0.4:
-            background_image = pygame.image.load("Prototyp\img\S0_RU.jpg")
+            background_image = pygame.image.load("Prototyp/img/S0_RU.jpg")
         elif left_stick_x < -0.4 and left_stick_y > 0.4:
-            background_image = pygame.image.load("Prototyp\img\S0_LD.jpg")
+            background_image = pygame.image.load("Prototyp/img/S0_LD.jpg")
         elif left_stick_x > 0.4 and left_stick_y > 0.4:
-            background_image = pygame.image.load("Prototyp\img\S0_RD.jpg") 
+            background_image = pygame.image.load("Prototyp/img/S0_RD.jpg") 
         elif left_stick_x < -0.5:
-            background_image = pygame.image.load("Prototyp\img\S0_L.jpg")
+            background_image = pygame.image.load("Prototyp/img/S0_L.jpg")
         elif left_stick_x > 0.5:
-            background_image = pygame.image.load("Prototyp\img\S0_R.jpg")
+            background_image = pygame.image.load("Prototyp/img/S0_R.jpg")
         elif left_stick_y < -0.5:
-            background_image = pygame.image.load("Prototyp\img\S0_U.jpg")
+            background_image = pygame.image.load("Prototyp/img/S0_U.jpg")
         elif left_stick_y > 0.5:
-            background_image = pygame.image.load("Prototyp\img\S0_D.jpg")
+            background_image = pygame.image.load("Prototyp/img/S0_D.jpg")
         elif abs(left_stick_x) < 0.5 and abs(left_stick_y) < 0.5:
-            background_image = pygame.image.load("Prototyp\img\start.jpg")
+            background_image = pygame.image.load("Prototyp/img/start.jpg")
     elif state == 2:
         if selection == 0 and x_button:
             selection = 1
-            background_image = pygame.image.load("Prototyp\img\S2_selection1.jpg")
+            background_image = pygame.image.load("Prototyp/img/S2_selection1.jpg")
         elif not selection == 0:
             if circle_button:
                 selection = 0
-                background_image = pygame.image.load("Prototyp\img\S2.jpg")
+                background_image = pygame.image.load("Prototyp/img/S2.jpg")
             elif right_bumper:
                 if selection == 1:
                     selection = 2
-                    background_image = pygame.image.load("Prototyp\img\S2_selection2.jpg")
+                    background_image = pygame.image.load("Prototyp/img/S2_selection2.jpg")
                 elif selection == 2:
                     selection = 3
-                    background_image = pygame.image.load("Prototyp\img\S2_selection3.jpg")
+                    background_image = pygame.image.load("Prototyp/img/S2_selection3.jpg")
             elif left_bumper:
                 if selection == 2:
                     selection = 1
-                    background_image = pygame.image.load("Prototyp\img\S2_selection1.jpg")
+                    background_image = pygame.image.load("Prototyp/img/S2_selection1.jpg")
                 elif selection == 3:
                     selection = 2
-                    background_image = pygame.image.load("Prototyp\img\S2_selection2.jpg")
+                    background_image = pygame.image.load("Prototyp/img/S2_selection2.jpg")
             elif selection == 3 and square_button:
                 if not selected:
                     selected = True
-                    background_image = pygame.image.load("Prototyp\img\S2_selected.jpg")
+                    background_image = pygame.image.load("Prototyp/img/S2_selected.jpg")
                 else: 
                     selected = False
-                    background_image = pygame.image.load("Prototyp\img\S2_selection3.jpg")
+                    background_image = pygame.image.load("Prototyp/img/S2_selection3.jpg")
             sleep(0.06)
 
     elif state == 3:
         if selection == 0 and x_button:
             selection = 1
-            background_image = pygame.image.load("Prototyp\img\S3_selection1.jpg")
+            background_image = pygame.image.load("Prototyp/img/S3_selection1.jpg")
         elif not selection == 0:
             if circle_button:
                 selection = 0
-                background_image = pygame.image.load("Prototyp\img\S3.jpg")
+                background_image = pygame.image.load("Prototyp/img/S3.jpg")
             elif right_bumper:
                 if selection == 1:
                     selection = 2
-                    background_image = pygame.image.load("Prototyp\img\S3_selection2.jpg")
+                    background_image = pygame.image.load("Prototyp/img/S3_selection2.jpg")
                 elif selection == 2:
                     selection = 3
-                    background_image = pygame.image.load("Prototyp\img\S3_selection3.jpg")
+                    background_image = pygame.image.load("Prototyp/img/S3_selection3.jpg")
                 elif selection == 3:
                     selection = 4
-                    background_image = pygame.image.load("Prototyp\img\S3_selection4.jpg")
+                    background_image = pygame.image.load("Prototyp/img/S3_selection4.jpg")
                 elif selection == 4:
                     selection = 1
-                    background_image = pygame.image.load("Prototyp\img\S3_selection1.jpg")
+                    background_image = pygame.image.load("Prototyp/img/S3_selection1.jpg")
             elif left_bumper:
                 if selection == 2:
                     selection = 1
-                    background_image = pygame.image.load("Prototyp\img\S3_selection1.jpg")
+                    background_image = pygame.image.load("Prototyp/img/S3_selection1.jpg")
                 elif selection == 3:
                     selection = 2
-                    background_image = pygame.image.load("Prototyp\img\S3_selection2.jpg")
+                    background_image = pygame.image.load("Prototyp/img/S3_selection2.jpg")
                 elif selection == 4:
                     selection = 3
-                    background_image = pygame.image.load("Prototyp\img\S3_selection3.jpg")
+                    background_image = pygame.image.load("Prototyp/img/S3_selection3.jpg")
                 elif selection == 1:
                     selection = 4
-                    background_image = pygame.image.load("Prototyp\img\S3_selection4.jpg")
+                    background_image = pygame.image.load("Prototyp/img/S3_selection4.jpg")
             elif selection == 1 and square_button:
                 if not selected:
                     selected = True
-                    background_image = pygame.image.load("Prototyp\img\S3_selected.jpg")
+                    background_image = pygame.image.load("Prototyp/img/S3_selected.jpg")
                 else: 
                     selected = False
-                    background_image = pygame.image.load("Prototyp\img\S3_selection1.jpg")
+                    background_image = pygame.image.load("Prototyp/img/S3_selection1.jpg")
             sleep(0.06)
 
     background_image = pygame.transform.scale(background_image, (width, height))
