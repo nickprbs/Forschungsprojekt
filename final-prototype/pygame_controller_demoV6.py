@@ -3,8 +3,7 @@ import sys
 import math
 
 # Konfiguration
-WINDOW_WIDTH, WINDOW_HEIGHT = 800, 600
-WINDOW_WIDTH, WINDOW_HEIGHT = 1000, 700
+WINDOW_WIDTH, WINDOW_HEIGHT = 950, 827
 BG_GRAY_PATH = 'bg_gray.png'
 BG_COLOR_PATH = 'bg_color.png'
 SHAPE_INITIAL_SIZE = 100
@@ -47,10 +46,11 @@ screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 clock = pygame.time.Clock()
 
 # Hintergründe laden & skalieren
-bg_gray = pygame.image.load(BG_GRAY_PATH).convert()
-bg_gray = pygame.transform.scale(bg_gray, (WINDOW_WIDTH, WINDOW_HEIGHT))
-bg_color = pygame.image.load(BG_COLOR_PATH).convert()
-bg_color = pygame.transform.scale(bg_color, (WINDOW_WIDTH, WINDOW_HEIGHT))
+bg_gray_img = pygame.image.load(BG_GRAY_PATH).convert()
+bg_color_img = pygame.image.load(BG_COLOR_PATH).convert()
+# Do NOT scale, keep original size and aspect ratio
+bg_gray = bg_gray_img
+bg_color = bg_color_img
 
 # Joystick init
 pygame.joystick.init()
@@ -545,9 +545,11 @@ while running:
     # Zeichnen
 
     if building_mode:
+        # Draw background at top-left, do not scale
         screen.blit(bg_gray, (0,0))
-        #red outline at the border of the window
-        pygame.draw.rect(screen, (255, 0, 0), screen.get_rect(), 4)
+        # Insert scatter_tooltipp_selected.png under the background
+        scatter_tooltipp = pygame.image.load('scatter_tooltip_building.png').convert_alpha()
+        screen.blit(scatter_tooltipp, (0, 660))
         
         for r in placed_regions:
             screen.blit(r['surface'], r['rect'])
@@ -560,15 +562,23 @@ while running:
                 screen.blit(r['surface'], r['rect'])
             for ic in cluster['placed_icons']:
                 screen.blit(ic['surface'], ic['rect'])
+        # Draw red outline around the background image only
+        bg_rect = bg_gray.get_rect(topleft=(0,0))
+        pygame.draw.rect(screen, (255, 0, 0), bg_rect, 4)
     else:
+        # Draw background at top-left, do not scale
         screen.blit(bg_gray, (0,0))
-        # lightblue outline at the border of the window
-        pygame.draw.rect(screen, (140,82,255), screen.get_rect(), 4)
+        # Insert scatter_tooltipp_selected.png under the background
+        scatter_tooltipp = pygame.image.load('scatter_tooltip_selected.png').convert_alpha()
+        screen.blit(scatter_tooltipp, (0, 660))
         for cluster in clusters:
             for r in cluster['placed_regions']:
                 screen.blit(r['surface'], r['rect'])
             for ic in cluster['placed_icons']:
                 screen.blit(ic['surface'], ic['rect'])
+        # Draw lavender outline around the background image only
+        bg_rect = bg_gray.get_rect(topleft=(0,0))
+        pygame.draw.rect(screen, (140,82,255), bg_rect, 4)
         
     pygame.display.flip()
     lock = lock-1 if lock > 0 else 0

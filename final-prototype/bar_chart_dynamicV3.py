@@ -3,7 +3,7 @@ import sys
 
 # ----- Configuration -----
 WINDOW_WIDTH = 948
-WINDOW_HEIGHT = 660
+WINDOW_HEIGHT = 900
 FPS = 60
 
 # PS4 Controller mapping (adjust if needed)
@@ -31,6 +31,7 @@ AXIS_THRESHOLD = 0.5
 # Delay in milliseconds for continuous movements
 CURSOR_MOVE_DELAY = 200
 BOUND_MOVE_DELAY = 200
+
 
 # ----- Hilfsfunktionen -----
 def draw_dashed_rect(surface, color, rect, dash_length=5):
@@ -66,6 +67,8 @@ def main():
     # Hintergrund-Bilder laden
     color_bg = pygame.image.load('bar_color.png').convert()
     gray_bg = pygame.image.load('bar_gray.png').convert()
+    tooltipp_selected = pygame.image.load('bar_tooltipp_selected.png').convert_alpha()
+    tooltipp_interval = pygame.image.load('bar_tooltipp_interval.png').convert_alpha()
 
     # Balken-Rechtecke berechnen
     bar_width = CHART_WIDTH // BAR_COUNT
@@ -120,17 +123,30 @@ def main():
                             interval_end = last_interval_end
                             last_interval_start = None
                             last_interval_end = None
-                            selected -= set(range(interval_start, interval_end + 1))
+                            if invert_interval:
+                                # Invertiere Selektion
+                                if interval_end >= interval_start:
+                                    selected -= set(range(0, interval_start)) | set(range(interval_end, BAR_COUNT))
+                                else:
+                                    selected -= set(range(interval_end +1 , interval_start))
+                            else:
+                                if interval_end >= interval_start:
+                                    selected -= set(range(interval_start, interval_end + 1))
+                                else:
+                                    selected -= set(range(interval_start, BAR_COUNT)) | set(range(0, interval_end + 1))
                         else:
                             mid = BAR_COUNT // 2
                             interval_start = interval_end = mid
-                        invert_interval = False
+                        
                     else:
                         # Schließen: speichere aktuelles Intervall
                         last_interval_start = interval_start
                         last_interval_end = interval_end
                         # Überführen in Selektion
-                        rng = set(range(interval_start, interval_end + 1))
+                        if interval_end >= interval_start:
+                            rng = set(range(interval_start, interval_end + 1))
+                        else: 
+                            rng = set(range(interval_start, BAR_COUNT)) | set(range(0, interval_end + 1))
                         if not invert_interval:
                             selected |= rng
                         else:
@@ -211,13 +227,18 @@ def main():
 
         # ----- Zeichnen -----
         if not interval_mode:
+
+            screen.blit(tooltipp_selected, (0, 660))
             if not selected:
                 screen.blit(color_bg, (0, 0))
             else:
                 screen.blit(gray_bg, (0, 0))
                 for idx in selected:
                     screen.blit(bar_color_surfs[idx], bar_rects[idx].topleft)
+            
+            pygame.draw.rect(screen, (140, 80, 255), pygame.Rect(0, 0, 948, 660), 4)
         else:
+            screen.blit(tooltipp_interval, (0, 660))
             if not invert_interval:
                 screen.blit(gray_bg, (0, 0))
                 # Intervall farbig
@@ -235,11 +256,20 @@ def main():
             else:
                 screen.blit(color_bg, (0, 0))
                 # Intervall grau
-                for idx in range(interval_start, interval_end + 1):
-                    screen.blit(bar_gray_surfs[idx], bar_rects[idx].topleft)
+                if interval_start <= interval_end:
+                    for idx in range(interval_start, interval_end + 1):
+                        screen.blit(bar_gray_surfs[idx], bar_rects[idx].topleft)
+                else: 
+                    for idx in range(interval_start, BAR_COUNT):
+                        screen.blit(bar_gray_surfs[idx], bar_rects[idx].topleft)
+                    for idx in range(0, interval_end + 1):
+                        screen.blit(bar_gray_surfs[idx], bar_rects[idx].topleft)
                 # normale Auswahl farbig
                 for idx in selected:
                     screen.blit(bar_color_surfs[idx], bar_rects[idx].topleft)
+            
+            pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(0, 0, 948, 660), 4)
+
 
         if not interval_mode:
             # Cursor zeichnen   
