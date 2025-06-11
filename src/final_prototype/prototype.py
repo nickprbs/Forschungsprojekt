@@ -245,7 +245,7 @@ NAVIGATION_MAP = {
         "L3_R3": "52_PCP_Intervalmode_0"
     },
     "52_PCP_Intervalmode_0": {
-        "L3_R3": "53_PCP_Intervalmode_1"
+        "SQUARE": "53_PCP_Intervalmode_1"
     },
     "53_PCP_Intervalmode_1": {
         "L2": "54_PCP_Intervalmode_2_enlarge"
