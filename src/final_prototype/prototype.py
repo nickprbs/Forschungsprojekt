@@ -54,64 +54,64 @@ def display_image(image_path):
 display_image(images[current_image])
 
 NAVIGATION_MAP = {
-    "1_Globe_Start": { #done
+    "1_Globe_Start": { 
         "TRIANGLE": "2_Globe_Selected",
         "DPAD_RIGHT": "7_Scatterplot_Start",
         "DPAD_UP": "39_PCP_1",
         "DPAD_DOWN": "80_Bar"
     },
-    "2_Globe_Selected": { #done
+    "2_Globe_Selected": { 
         "TRIANGLE": "1_Globe_Start",
         "RIGHT_STICK_RIGHT": "3_Globe_Selected_Long45",
         "LEFT_STICK_RIGHT": "5_Globe_Selected_Year2060"
     },
-    "3_Globe_Selected_Long45": { #done
+    "3_Globe_Selected_Long45": { 
         "RIGHT_STICK_RIGHT": "4_Globe_Selected_Long90",
         "RIGHT_STICK_LEFT": "2_Globe_Selected",
         "TRIANGLE": "1_Globe_Start"
     },
-    "4_Globe_Selected_Long90": { #done
+    "4_Globe_Selected_Long90": { 
         "RIGHT_STICK_LEFT": "3_Globe_Selected_Long45",
         "TRIANGLE": "1_Globe_Start"
     },
-    "5_Globe_Selected_Year2060": { #done
+    "5_Globe_Selected_Year2060": { 
         "LEFT_STICK_RIGHT": "6_Globe_Selected_Year2099",
         "LEFT_STICK_LEFT": "2_Globe_Selected",
         "TRIANGLE": "1_Globe_Start"
     },
-    "6_Globe_Selected_Year2099": { #done
+    "6_Globe_Selected_Year2099": { 
         "LEFT_STICK_LEFT": "5_Globe_Selected_Year2060",
         "TRIANGLE": "1_Globe_Start"
     },
 
-    "7_Scatterplot_Start": { #done
+    "7_Scatterplot_Start": { 
         "DPAD_RIGHT": "1_Globe_Start",
         "DPAD_UP": "39_PCP_1",
         "DPAD_DOWN": "80_Bar",
         "TRIANGLE": "8_Scatterplot_Selected"
     },
 
-    "8_Scatterplot_Selected": { #done
+    "8_Scatterplot_Selected": { 
         "TRIANGLE": "7_Scatterplot_Start",
         "LEFT_STICK_RIGHT": "9_Scatterplot_Selected_Year2060",
         "L3_R3": "11_Scatterplot_BuildingMode_1"
     },
-    "9_Scatterplot_Selected_Year2060": { #done
+    "9_Scatterplot_Selected_Year2060": { 
         "LEFT_STICK_RIGHT": "10_Scatterplot_Selected_Year2099",
         "LEFT_STICK_LEFT": "8_Scatterplot_Selected",
         "L3_R3": "11_Scatterplot_BuildingMode_1",
         "TRIANGLE": "7_Scatterplot_Start"
     },
-    "10_Scatterplot_Selected_Year2099": { #done
+    "10_Scatterplot_Selected_Year2099": { 
         "LEFT_STICK_LEFT": "9_Scatterplot_Selected_Year2060",
         "L3_R3": "11_Scatterplot_BuildingMode_1",
         "TRIANGLE": "7_Scatterplot_Start"
     },
-    "11_Scatterplot_BuildingMode_1": { #done
+    "11_Scatterplot_BuildingMode_1": { 
         "CIRCLE": "12_Scatterplot_BuildingMode_1_Circle_Object_1",
         "L3_R3": "8_Scatterplot_Selected"
     },
-    "12_Scatterplot_BuildingMode_1_Circle_Object_1": { #!!!!!!!!!!!!!!!!!!!! change to left stick 
+    "12_Scatterplot_BuildingMode_1_Circle_Object_1": {  
         "LEFT_STICK_LEFT_THEN_UP": "13_Scatterplot_BuildingMode_1_Circle_Object_2"
     },
     "13_Scatterplot_BuildingMode_1_Circle_Object_2": {
@@ -121,7 +121,7 @@ NAVIGATION_MAP = {
         "SQUARE": "15_Scatterplot_BuildingMode_1_Square_Object_1"
     },
 
-    "15_Scatterplot_BuildingMode_1_Square_Object_1": { #!!!!!!!!!!!!!!!!!!!! change to left stick 
+    "15_Scatterplot_BuildingMode_1_Square_Object_1": { 
         "LEFT_STICK_LEFT_THEN_UP": "16_Scatterplot_BuildingMode_Square_Object_2"
     },
     "16_Scatterplot_BuildingMode_Square_Object_2": {
@@ -147,10 +147,10 @@ NAVIGATION_MAP = {
     "22_Scatterplot_BuildingMode_1_Triangle_Object_2": {
         "R3": "23_Scatterplot_BuildingMode_1_Triangle_Object_2"
     },
-     "23_Scatterplot_BuildingMode_1_Triangle_Object_2": { #done
+     "23_Scatterplot_BuildingMode_1_Triangle_Object_2": { 
         "L3": "24_Scatterplot_BuildingMode_1_Triangle_Object_Committed"
     },
-      "24_Scatterplot_BuildingMode_1_Triangle_Object_Committed": { #done
+      "24_Scatterplot_BuildingMode_1_Triangle_Object_Committed": { 
         "L3_R3": "25_Scatterplot_2"
     },
     "25_Scatterplot_2": {
@@ -193,7 +193,7 @@ NAVIGATION_MAP = {
     "37_Scatterplot_5": {
         "TRIANGLE": "7_Scatterplot_Start"
     },
-    "39_PCP_1": { #done
+    "39_PCP_1": { 
         "DPAD_RIGHT": "1_Globe_Start",
         "DPAD_UP": "7_Scatterplot_Start",
         "DPAD_DOWN": "80_Bar",
@@ -330,7 +330,7 @@ NAVIGATION_MAP = {
     "78_PCP_Quickselect_small_11": {
         "TRIANGLE": "39_PCP_1"
     },
-    "80_Bar": { #done
+    "80_Bar": { 
         "DPAD_RIGHT": "1_Globe_Start",
         "DPAD_UP": "7_Scatterplot_Start",
         "DPAD_DOWN": "39_PCP_1",
@@ -338,67 +338,81 @@ NAVIGATION_MAP = {
     },
     "81_Bar_Selected": {
         "TRIANGLE": "80_Bar",
-        "R3": "82_Bar_Sync_1"
+        "L3": "82_Bar_Sync_1",
+        "TRIANGLE": "80_Bar"
     },
     "82_Bar_Sync_1": {
-        "LEFT_STICK_RIGHT": "83_Bar_Sync_2"
+        "LEFT_STICK_RIGHT": "83_Bar_Sync_2",
+        "TRIANGLE": "80_Bar"
     },
     "83_Bar_Sync_2": {
         "LEFT_STICK_RIGHT": "84_Bar_Sync_3",
-        "LEFT_STICK_LEFT": "82_Bar_Sync_1"
+        "LEFT_STICK_LEFT": "82_Bar_Sync_1",
+        "TRIANGLE": "80_Bar"
     },
     "84_Bar_Sync_3": {
         "LEFT_STICK_LEFT": "83_Bar_Sync_2",
-        "LEFT_STICK_RIGHT": "85_Bar_Sync_4"
+        "LEFT_STICK_RIGHT": "85_Bar_Sync_4",
+        "TRIANGLE": "80_Bar"
     },
     "85_Bar_Sync_4": {
         "LEFT_STICK_LEFT": "84_Bar_Sync_3",
-        "LEFT_STICK_RIGHT": "87_Bar_Sync_6" #85 and 86 are the same image
+        "LEFT_STICK_RIGHT": "87_Bar_Sync_6", #85 and 86 are the same image
+        "TRIANGLE": "80_Bar"
     },
     "87_Bar_Sync_6": {
         "LEFT_STICK_LEFT": "85_Bar_Sync_4",
-        "LEFT_STICK_RIGHT": "88_Bar_Sync_7" 
+        "LEFT_STICK_RIGHT": "88_Bar_Sync_7",
+        "TRIANGLE": "80_Bar"
     },
     "88_Bar_Sync_7": {
         "LEFT_STICK_LEFT": "87_Bar_Sync_6",
-        "LEFT_STICK_RIGHT": "89_Bar_Sync_8" 
+        "LEFT_STICK_RIGHT": "89_Bar_Sync_8",
+        "TRIANGLE": "80_Bar"
     },
     "89_Bar_Sync_8": {
         "LEFT_STICK_LEFT": "88_Bar_Sync_7",
-        "LEFT_STICK_RIGHT": "90_Bar_Sync_9" 
+        "LEFT_STICK_RIGHT": "90_Bar_Sync_9",
+        "TRIANGLE": "80_Bar"
     },
     "90_Bar_Sync_9": {
         "LEFT_STICK_LEFT": "89_Bar_Sync_8",
-        "LEFT_STICK_RIGHT": "91_Bar_Sync_10" 
+        "LEFT_STICK_RIGHT": "91_Bar_Sync_10",
+        "TRIANGLE": "80_Bar"
     },
     "91_Bar_Sync_10": {
         "LEFT_STICK_LEFT": "90_Bar_Sync_9",
-        "X": "92_Bar_Sync_Selected_1"
+        "X": "92_Bar_Sync_Selected_1",
+        "TRIANGLE": "80_Bar"
     },
     "92_Bar_Sync_Selected_1": {
         "X": "91_Bar_Sync_10",
-        "L3_R3": "93_Bar_Sync_IntervalMode_1"
+        "L3_R3": "93_Bar_Sync_IntervalMode_1",
+        "TRIANGLE": "80_Bar"
     },
     "93_Bar_Sync_IntervalMode_1": {
         "R1": "94_Bar_Sync_IntervalMode_2"
     },
     "94_Bar_Sync_IntervalMode_2": {
-        "L2": "95_Bar_Sync_IntervalMode_3"
+        "L1": "95_Bar_Sync_IntervalMode_3"
     },
     "95_Bar_Sync_IntervalMode_3": {
-        "L1": "96_Bar_Sync_IntervalMode_4"
+        "L2": "96_Bar_Sync_IntervalMode_4"
     },
     "96_Bar_Sync_IntervalMode_4": {
         "L3_R3": "97_Bar_Sync"
     },
     "97_Bar_Sync": {
-        "R1": "98_Bar_Sync"
+        "R1": "98_Bar_Sync",
+        "TRIANGLE": "80_Bar"
     },
     "98_Bar_Sync": {
-        "X": "99_Bar_Sync"
+        "X": "99_Bar_Sync",
+        "TRIANGLE": "80_Bar"
     },
     "99_Bar_Sync": {
-        "L3_R3": "100_Bar_Sync_IntervalMode_5"
+        "L3_R3": "100_Bar_Sync_IntervalMode_5",
+        "TRIANGLE": "80_Bar"
     },
     "100_Bar_Sync_IntervalMode_5": {
         "R3": "101_Bar_Sync_IntervalMode_4"
@@ -453,7 +467,7 @@ square_left_down_combo_triggered = False
 square_r1_combo_triggered = False
 left_left_registered = False
 last_left_left_time = 0
-left_stick_gesture_cooldown = 0.5  # seconds
+left_stick_gesture_cooldown = 0.5  
 
 
 
