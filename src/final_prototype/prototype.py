@@ -280,7 +280,8 @@ NAVIGATION_MAP = {
         "L3_R3": "63_PCP_Selected_Quickselect_big"
     },
     "63_PCP_Selected_Quickselect_big": {
-        "X": "64_PCP_Quickselect_big" #??????
+        "X": "64_PCP_Quickselect_big",
+        "TRIANGLE": "39_PCP_1"
     },
     "64_PCP_Quickselect_big": {
         "X_L2": "65_PCP_Quickselect_big" 
