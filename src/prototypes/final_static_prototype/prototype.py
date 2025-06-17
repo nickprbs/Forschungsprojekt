@@ -2,8 +2,6 @@ import pygame
 import sys
 import os
 import re
-import subprocess
-import runpy
 from pygame.locals import *
 
 # Initialize Pygame
@@ -38,40 +36,9 @@ print(f"✅ Loaded {len(images)} images.")
 # Start with the first image
 current_image = "1_Globe_Start"
 
-# Path to scatterplot building mode script
-SCATTER_SCRIPT = os.path.abspath(os.path.join(BASE_DIR, "scatter_dynamic_demoV6.py"))
-BAR_CHART_SCRIPT = os.path.abspath(os.path.join(BASE_DIR, "bar_chart_dynamicV3.py"))
-
-def run_scatter_dynamic_demo():
-    """Run the scatter plot building mode script in the same process."""
-    try:
-        runpy.run_path(SCATTER_SCRIPT, run_name="__main__")
-    except SystemExit:
-        pass
-    except Exception as e:
-        print(f"Error running scatter plot demo: {e}")
-    finally:
-        global screen
-        screen = pygame.display.set_mode((WIDTH, HEIGHT))
-        pygame.display.set_caption("Sketch Viewer")
-
-def run_bar_chart_dynamic():
-    """Run the bar chart dynamic script in the same process."""
-    try:
-        runpy.run_path(BAR_CHART_SCRIPT, run_name="__main__")
-    except SystemExit:
-        pass
-    except Exception as e:
-        print(f"Error running bar chart demo: {e}")
-    finally:
-        global screen
-        screen = pygame.display.set_mode((WIDTH, HEIGHT))
-        pygame.display.set_caption("Sketch Viewer")
-
 # Function to display an image
-def display_image(image_key):
-    image_path = images.get(image_key)
-    if not image_path or not os.path.exists(image_path):
+def display_image(image_path):
+    if not os.path.exists(image_path):
         print(f"❌ File not found: {image_path}")
         return
     try:
@@ -79,29 +46,12 @@ def display_image(image_key):
         img = pygame.transform.smoothscale(img, (WIDTH, HEIGHT))
         screen.fill((0, 0, 0))
         screen.blit(img, (0, 0))
-
-        # Show hint for entering the dynamic/adaptive mode
-        lower_key = image_key.lower()
-        if "scatterplot" in lower_key or "bar" in lower_key:
-            font = pygame.font.SysFont(None, 28)
-            hint = font.render("Share-Button to start and end dynamic mode", True, (255, 255, 255))
-
-            overlay_height = 40
-            overlay = pygame.Surface((WIDTH, overlay_height))
-            overlay.set_alpha(180)
-            overlay.fill((0, 0, 0))
-            overlay_rect = overlay.get_rect(bottomleft=(0, HEIGHT))
-
-            screen.blit(overlay, overlay_rect)
-            hint_rect = hint.get_rect(center=(WIDTH // 2, HEIGHT - overlay_height // 2))
-            screen.blit(hint, hint_rect)
-
         pygame.display.flip()
     except pygame.error as e:
         print(f"Error loading image {image_path}: {e}")
 
 # Show the initial image
-display_image(current_image)
+display_image(images[current_image])
 
 NAVIGATION_MAP = {
     "1_Globe_Start": { 
@@ -536,40 +486,31 @@ while running:
             running = False
 
         elif event.type == JOYBUTTONDOWN:
-            if event.button == 4:
-                lower_title = current_image.lower()
-                if "scatterplot" in lower_title:
-                    run_scatter_dynamic_demo()
-                    display_image(current_image)
-                elif "bar" in lower_title:
-                    run_bar_chart_dynamic()
-                    display_image(current_image)
-
             if event.button == 3:  # 🔺 Triangle
                 if current_image in NAVIGATION_MAP and "TRIANGLE" in NAVIGATION_MAP[current_image]:
                     current_image = NAVIGATION_MAP[current_image]["TRIANGLE"]
-                    display_image(current_image)
+                    display_image(images[current_image])
                     print(f"🔺 Triangle → Showing image {current_image}")
                     
             # D-Pad RIGHT       
             if event.button == 14:
                 if current_image in NAVIGATION_MAP and "DPAD_RIGHT" in NAVIGATION_MAP[current_image]:
                     current_image = NAVIGATION_MAP[current_image]["DPAD_RIGHT"]
-                    display_image(current_image)
+                    display_image(images[current_image])
                     print(f"➡️ D-Pad RIGHT → Showing image {current_image}")
 
             # D-Pad UP
             elif event.button == 11:
                 if current_image in NAVIGATION_MAP and "DPAD_UP" in NAVIGATION_MAP[current_image]:
                     current_image = NAVIGATION_MAP[current_image]["DPAD_UP"]
-                    display_image(current_image)
+                    display_image(images[current_image])
                     print(f"⬆️ D-Pad UP → Showing image {current_image}")
                     
             # D-Pad DOWN        
             elif event.button == 12:
                 if current_image in NAVIGATION_MAP and "DPAD_DOWN" in NAVIGATION_MAP[current_image]:
                     current_image = NAVIGATION_MAP[current_image]["DPAD_DOWN"]
-                    display_image(current_image)
+                    display_image(images[current_image])
                     print(f"⬇️ D-Pad DOWN → Showing image {current_image}")
 
             
@@ -580,14 +521,14 @@ while running:
                 if right_stick_pressed and not combo_triggered:
                     if current_image in NAVIGATION_MAP and "L3_R3" in NAVIGATION_MAP[current_image]:
                         current_image = NAVIGATION_MAP[current_image]["L3_R3"]
-                        display_image(current_image)
+                        display_image(images[current_image])
                         print(f"🎮 L3 + R3 → Showing image {current_image}")
                         combo_triggered = True
 
                 elif not right_stick_pressed:  # handle solo L3
                     if current_image in NAVIGATION_MAP and "L3" in NAVIGATION_MAP[current_image]:
                         current_image = NAVIGATION_MAP[current_image]["L3"]
-                        display_image(current_image)
+                        display_image(images[current_image])
                         print(f"🎮 L3 → Showing image {current_image}")
                         
                         
@@ -596,14 +537,14 @@ while running:
                 if left_stick_pressed and not combo_triggered:
                     if current_image in NAVIGATION_MAP and "L3_R3" in NAVIGATION_MAP[current_image]:
                         current_image = NAVIGATION_MAP[current_image]["L3_R3"]
-                        display_image(current_image)
+                        display_image(images[current_image])
                         print(f"🎮 L3 + R3 → Showing image {current_image}")
                         combo_triggered = True
 
                 # Otherwise, check for solo R3
                 elif current_image in NAVIGATION_MAP and "R3" in NAVIGATION_MAP[current_image]:
                     current_image = NAVIGATION_MAP[current_image]["R3"]
-                    display_image(current_image)
+                    display_image(images[current_image])
                     print(f"🎮 R3 → Showing image {current_image}")
 
             
@@ -615,7 +556,7 @@ while running:
                 if l1_pressed and not circle_l1_combo_triggered:
                     if current_image in NAVIGATION_MAP and "CIRCLE_L1" in NAVIGATION_MAP[current_image]:
                         current_image = NAVIGATION_MAP[current_image]["CIRCLE_L1"]
-                        display_image(current_image)
+                        display_image(images[current_image])
                         print(f"⭕ + L1 → Showing image {current_image}")
                         circle_l1_combo_triggered = True
                         
@@ -623,7 +564,7 @@ while running:
                 # Normal Circle action
                 elif current_image in NAVIGATION_MAP and "CIRCLE" in NAVIGATION_MAP[current_image]:
                     current_image = NAVIGATION_MAP[current_image]["CIRCLE"]
-                    display_image(current_image)
+                    display_image(images[current_image])
                     print(f"⭕ Circle → Showing image {current_image}")
 
 
@@ -635,14 +576,14 @@ while running:
                 if r1_pressed and not square_r1_combo_triggered:
                     if current_image in NAVIGATION_MAP and "SQUARE_R1" in NAVIGATION_MAP[current_image]:
                         current_image = NAVIGATION_MAP[current_image]["SQUARE_R1"]
-                        display_image(current_image)
+                        display_image(images[current_image])
                         print(f"🟦 + R1 → Showing image {current_image}")
                         square_r1_combo_triggered = True
 
             # Solo Square
                 elif current_image in NAVIGATION_MAP and "SQUARE" in NAVIGATION_MAP[current_image]:
                     current_image = NAVIGATION_MAP[current_image]["SQUARE"]
-                    display_image(current_image)
+                    display_image(images[current_image])
                     print(f"🟦 Square → Showing image {current_image}")
 
 
@@ -654,20 +595,20 @@ while running:
                 if l2_pressed and not x_l2_combo_triggered:
                     if current_image in NAVIGATION_MAP and "X_L2" in NAVIGATION_MAP[current_image]:
                         current_image = NAVIGATION_MAP[current_image]["X_L2"]
-                        display_image(current_image)
+                        display_image(images[current_image])
                         print(f"✖️ + L2 → Showing image {current_image}")
                         x_l2_combo_triggered = True
 
                 elif r1_pressed and not x_r1_combo_triggered:
                     if current_image in NAVIGATION_MAP and "X_R1" in NAVIGATION_MAP[current_image]:
                         current_image = NAVIGATION_MAP[current_image]["X_R1"]
-                        display_image(current_image)
+                        display_image(images[current_image])
                         print(f"✖️ + R1 → Showing image {current_image}")
                         x_r1_combo_triggered = True
 
                 elif current_image in NAVIGATION_MAP and "X" in NAVIGATION_MAP[current_image]:
                     current_image = NAVIGATION_MAP[current_image]["X"]
-                    display_image(current_image)
+                    display_image(images[current_image])
                     print(f"✖️ X → Showing image {current_image}")
 
 
@@ -679,14 +620,14 @@ while running:
                 if circle_pressed and not circle_l1_combo_triggered:
                     if current_image in NAVIGATION_MAP and "CIRCLE_L1" in NAVIGATION_MAP[current_image]:
                         current_image = NAVIGATION_MAP[current_image]["CIRCLE_L1"]
-                        display_image(current_image)
+                        display_image(images[current_image])
                         print(f"⭕ + L1 → Showing image {current_image}")
                         circle_l1_combo_triggered = True
                         
                 # Normal L1 action
                 elif current_image in NAVIGATION_MAP and "L1" in NAVIGATION_MAP[current_image]:
                     current_image = NAVIGATION_MAP[current_image]["L1"]
-                    display_image(current_image)
+                    display_image(images[current_image])
                     print(f"👈 L1 → Showing image {current_image}")
 
 
@@ -694,7 +635,7 @@ while running:
             elif event.button == 6:  # Options button
                 if current_image in NAVIGATION_MAP and "OPTIONS" in NAVIGATION_MAP[current_image]:
                     current_image = NAVIGATION_MAP[current_image]["OPTIONS"]
-                    display_image(current_image)
+                    display_image(images[current_image])
                     print(f"Options → Showing image {current_image}")
 
 
@@ -703,7 +644,7 @@ while running:
                 if x_pressed and not x_r1_combo_triggered:
                     if current_image in NAVIGATION_MAP and "X_R1" in NAVIGATION_MAP[current_image]:
                         current_image = NAVIGATION_MAP[current_image]["X_R1"]
-                        display_image(current_image)
+                        display_image(images[current_image])
                         print(f"✖️ + R1 → Showing image {current_image}")
                         x_r1_combo_triggered = True
 
@@ -711,14 +652,14 @@ while running:
                 elif square_pressed and not square_r1_combo_triggered:
                     if current_image in NAVIGATION_MAP and "SQUARE_R1" in NAVIGATION_MAP[current_image]:
                         current_image = NAVIGATION_MAP[current_image]["SQUARE_R1"]
-                        display_image(current_image)
+                        display_image(images[current_image])
                         print(f"🟦 + R1 → Showing image {current_image}")
                         square_r1_combo_triggered = True
 
                 # Solo R1 action
                 elif current_image in NAVIGATION_MAP and "R1" in NAVIGATION_MAP[current_image]:
                     current_image = NAVIGATION_MAP[current_image]["R1"]
-                    display_image(current_image)
+                    display_image(images[current_image])
                     print(f"R1 → Showing image {current_image}")
 
                     
@@ -745,7 +686,7 @@ while running:
 
                 if current_image in NAVIGATION_MAP and "X_RELEASE" in NAVIGATION_MAP[current_image]:
                     current_image = NAVIGATION_MAP[current_image]["X_RELEASE"]
-                    display_image(current_image)
+                    display_image(images[current_image])
                     print(f"✖️ Released → Showing image {current_image}")
 
             elif event.button == 10:
@@ -759,7 +700,7 @@ while running:
 
                 if current_image in NAVIGATION_MAP and "SQUARE_RELEASE" in NAVIGATION_MAP[current_image]:
                     current_image = NAVIGATION_MAP[current_image]["SQUARE_RELEASE"]
-                    display_image(current_image)
+                    display_image(images[current_image])
                     print(f"🟦 Released → Showing image {current_image}")
 
             if left_stick_y < 0.3:
@@ -778,7 +719,7 @@ while running:
     if right_stick_x > 0.5 and (current_time - last_joystick_move > joystick_cooldown):
         if current_image in NAVIGATION_MAP and "RIGHT_STICK_RIGHT" in NAVIGATION_MAP[current_image]:
             current_image = NAVIGATION_MAP[current_image]["RIGHT_STICK_RIGHT"]
-            display_image(current_image)
+            display_image(images[current_image])
             print(f"🎮 Right Stick RIGHT → Showing image {current_image}")
             last_joystick_move = current_time
 
@@ -786,7 +727,7 @@ while running:
     if right_stick_x < -0.5 and not right_left_move_registered and (current_time - last_joystick_move > joystick_cooldown):
         if current_image in NAVIGATION_MAP and "RIGHT_STICK_LEFT" in NAVIGATION_MAP[current_image]:
             current_image = NAVIGATION_MAP[current_image]["RIGHT_STICK_LEFT"]
-            display_image(current_image)
+            display_image(images[current_image])
             print(f"🎮 Right Stick LEFT → Showing image {current_image}")
             last_joystick_move = current_time
             right_left_move_registered = True
@@ -806,7 +747,7 @@ while running:
     if right_left_registered and right_stick_y < -0.5 and (current_time - last_right_left_time < right_stick_gesture_cooldown):
         if current_image in NAVIGATION_MAP and "RIGHT_STICK_LEFT_THEN_UP" in NAVIGATION_MAP[current_image]:
             current_image = NAVIGATION_MAP[current_image]["RIGHT_STICK_LEFT_THEN_UP"]
-            display_image(current_image)
+            display_image(images[current_image])
             print(f"🎮 Right Stick LEFT + UP → Showing image {current_image}")
             right_left_registered = False
             last_joystick_move = current_time
@@ -819,7 +760,7 @@ while running:
     if right_stick_y > 0.5 and not right_down_move_registered and (current_time - last_joystick_move > joystick_cooldown):
         if current_image in NAVIGATION_MAP and "RIGHT_STICK_DOWN" in NAVIGATION_MAP[current_image]:
             current_image = NAVIGATION_MAP[current_image]["RIGHT_STICK_DOWN"]
-            display_image(current_image)
+            display_image(images[current_image])
             print(f"🎮 Right Stick DOWN → Showing image {current_image}")
             last_joystick_move = current_time
             right_down_move_registered = True
@@ -833,7 +774,7 @@ while running:
     if right_stick_y < -0.5 and not right_up_move_registered and (current_time - last_joystick_move > joystick_cooldown):
         if current_image in NAVIGATION_MAP and "RIGHT_STICK_UP" in NAVIGATION_MAP[current_image]:
             current_image = NAVIGATION_MAP[current_image]["RIGHT_STICK_UP"]
-            display_image(current_image)
+            display_image(images[current_image])
             print(f"🎮 Right Stick UP → Showing image {current_image}")
             last_joystick_move = current_time
             right_up_move_registered = True
@@ -852,7 +793,7 @@ while running:
     if left_stick_x > 0.5 and not left_move_registered and (current_time - last_joystick_move > joystick_cooldown):
         if current_image in NAVIGATION_MAP and "LEFT_STICK_RIGHT" in NAVIGATION_MAP[current_image]:
             current_image = NAVIGATION_MAP[current_image]["LEFT_STICK_RIGHT"]
-            display_image(current_image)
+            display_image(images[current_image])
             print(f"🎮 Left Stick RIGHT → Showing image {current_image}")
             last_joystick_move = current_time
             left_move_registered = True
@@ -867,7 +808,7 @@ while running:
     if left_stick_x < -0.5 and not left_left_move_registered and (current_time - last_joystick_move > joystick_cooldown):
         if current_image in NAVIGATION_MAP and "LEFT_STICK_LEFT" in NAVIGATION_MAP[current_image]:
             current_image = NAVIGATION_MAP[current_image]["LEFT_STICK_LEFT"]
-            display_image(current_image)
+            display_image(images[current_image])
             print(f"🎮 Left Stick LEFT → Showing image {current_image}")
             last_joystick_move = current_time
             left_left_move_registered = True
@@ -886,7 +827,7 @@ while running:
     if left_left_registered and left_stick_y < -0.5 and (current_time - last_left_left_time < left_stick_gesture_cooldown):
         if current_image in NAVIGATION_MAP and "LEFT_STICK_LEFT_THEN_UP" in NAVIGATION_MAP[current_image]:
             current_image = NAVIGATION_MAP[current_image]["LEFT_STICK_LEFT_THEN_UP"]
-            display_image(current_image)
+            display_image(images[current_image])
             print(f"🎮 Left Stick LEFT + UP → Showing image {current_image}")
             last_joystick_move = current_time
         left_left_registered = False  # Reset after gesture
@@ -905,14 +846,14 @@ while running:
         if square_pressed and not square_left_down_combo_triggered:
             if current_image in NAVIGATION_MAP and "SQUARE_LEFT_STICK_DOWN" in NAVIGATION_MAP[current_image]:
                 current_image = NAVIGATION_MAP[current_image]["SQUARE_LEFT_STICK_DOWN"]
-                display_image(current_image)
+                display_image(images[current_image])
                 print(f"🟦 + 🎮 Left Stick DOWN → Showing image {current_image}")
                 square_left_down_combo_triggered = True
                 last_joystick_move = current_time
       # Solo action (only if combo didn’t trigger)
         elif current_image in NAVIGATION_MAP and "LEFT_STICK_DOWN" in NAVIGATION_MAP[current_image]:
             current_image = NAVIGATION_MAP[current_image]["LEFT_STICK_DOWN"]
-            display_image(current_image)
+            display_image(images[current_image])
             print(f"🎮 Left Stick DOWN → Showing image {current_image}")
             last_joystick_move = current_time
 
@@ -924,7 +865,7 @@ while running:
     if r2_value > 0.5 and not r2_triggered and (current_time - last_joystick_move > joystick_cooldown):
         if current_image in NAVIGATION_MAP and "R2" in NAVIGATION_MAP[current_image]:
             current_image = NAVIGATION_MAP[current_image]["R2"]
-            display_image(current_image)
+            display_image(images[current_image])
             print(f"🎮 R2 Trigger → Showing image {current_image}")
             last_joystick_move = current_time
             r2_triggered = True
@@ -941,7 +882,7 @@ while running:
     if l2_value > 0.5 and not l2_triggered and (current_time - last_joystick_move > joystick_cooldown):
         if current_image in NAVIGATION_MAP and "L2" in NAVIGATION_MAP[current_image]:
             current_image = NAVIGATION_MAP[current_image]["L2"]
-            display_image(current_image)
+            display_image(images[current_image])
             print(f"🎮 L2 Trigger → Showing image {current_image}")
             last_joystick_move = current_time
             l2_triggered = True
@@ -962,7 +903,7 @@ while running:
     if x_pressed and l2_pressed and not x_l2_combo_triggered:
         if current_image in NAVIGATION_MAP and "X_L2" in NAVIGATION_MAP[current_image]:
             current_image = NAVIGATION_MAP[current_image]["X_L2"]
-            display_image(current_image)
+            display_image(images[current_image])
             print(f"✖️ + L2 → Showing image {current_image}")
             last_joystick_move = current_time
             x_l2_combo_triggered = True
@@ -970,7 +911,7 @@ while running:
     if square_pressed and l2_pressed and not square_l2_combo_triggered:
         if current_image in NAVIGATION_MAP and "SQUARE_L2" in NAVIGATION_MAP[current_image]:
             current_image = NAVIGATION_MAP[current_image]["SQUARE_L2"]
-            display_image(current_image)
+            display_image(images[current_image])
             print(f"🟦 + L2 → Showing image {current_image}")
             last_joystick_move = current_time
             square_l2_combo_triggered = True
