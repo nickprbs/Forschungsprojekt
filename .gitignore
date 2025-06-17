@@ -167,3 +167,6 @@ cython_debug/
 >>>>>>> 20f63ad13a461dbc85eb5d6d741ef053f4c018b0
 .DS_Store
 .DS_Store
+
+csv_output
+src/dask_temp
