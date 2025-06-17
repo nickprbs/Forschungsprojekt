@@ -1,5 +1,7 @@
 altair==5.5.0
+dask==2025.5.1
 ipykernel==6.29.5
 ipython==8.31.0
 pandas==2.2.3
 pygame==2.6.1
+xarray==2025.6.1
