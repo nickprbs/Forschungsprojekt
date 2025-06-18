@@ -1,5 +1,5 @@
 # Bachelor Research Project: Gamepad Controls for Visualizations
-This repository contains the code artifacts that have been produced throughout the duration of the project, including [several prototypes](/src/prototypes/) and [visualizations](/src/visualizations/). 
+This repository contains the code artifacts that have been produced throughout during the project, including [several prototypes](/src/prototypes/) and [visualizations](/src/visualizations/). 
 
 ![](/images/teaser.png) 
 
