@@ -39,7 +39,7 @@ users/gamepads
 
 ### Requirements:
 + All prototypes have been developed based on the inputs of a **Sony PS5 DualSense Controller** that is connected to the device via **Bluetooth**. Other controllers and/or connection methods are not guaranteed to work. 
-+ Python needs to be installied, we recommend using Python3.13 or higher
++ Python needs to be installed, we recommend using Python3.13 or higher
 
 ### Project Setup:
 1. Clone the repository e.g. by running `git clone https://github.tik.uni-stuttgart.de/VISUSstud/PRJ-ProbstTrackUkrainskyAbualqumboz-GamepadControlsForVisualizations.git`
